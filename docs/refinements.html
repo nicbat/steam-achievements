@@ -1,0 +1,190 @@
+<style>
+  :root {
+    --ground: #10141b; --ground-2: #0b0e14; --panel: #171d28; --panel-2: #1e2634;
+    --border: #2c3849; --border-soft: #222c3a; --ink: #d3dde8; --ink-dim: #9fb0c2;
+    --muted: #6f8195; --accent: #66c0f4; --accent-deep: #2a6f9e; --gold: #e7b464;
+    --green: #8ec449; --red: #e06c6c;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  .page { background: var(--ground); color: var(--ink); font-family: var(--font-body); line-height: 1.55; padding: clamp(18px,4vw,44px) 18px 90px; }
+  .wrap { max-width: 940px; margin: 0 auto; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-size: clamp(26px,4vw,40px); letter-spacing: -0.02em; margin: 0 0 12px; color: #f2f7fb; }
+  .lede { color: var(--ink-dim); max-width: 70ch; margin: 0 0 30px; font-size: 16px; }
+
+  .change { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; margin-bottom: 16px; }
+  .change__n { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: .05em; }
+  .change h2 { font-size: 19px; margin: 6px 0 12px; color: #eaf1f7; letter-spacing: -0.01em; }
+  .pf { display: grid; gap: 10px; margin: 6px 0 4px; }
+  .pf > div { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; }
+  .pf .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding-top: 3px; white-space: nowrap; }
+  .pf .prob .lbl { color: var(--red); }
+  .pf .fix .lbl { color: var(--green); }
+  .pf p { margin: 0; color: var(--ink-dim); }
+  .pf b { color: var(--ink); }
+
+  .demo { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 680px){ .demo { grid-template-columns: 1fr; } }
+  .demo__col { background: var(--ground-2); border: 1px solid var(--border-soft); border-radius: 10px; padding: 12px 14px; }
+  .demo__tag { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; }
+  .demo__col.before .demo__tag { color: var(--muted); }
+  .demo__col.after .demo__tag { color: var(--green); }
+
+  /* achievement row bits */
+  .arow { display: grid; grid-template-columns: 34px 1fr 58px 66px 30px; gap: 9px; align-items: center; padding: 7px 2px; border-top: 1px solid var(--border-soft); }
+  .arow:first-of-type { border-top: none; }
+  .arow.slim { grid-template-columns: 34px 1fr 66px; }
+  .ico { width: 30px; height: 30px; border-radius: 7px; background: linear-gradient(135deg, #3a6ea5, #2a4a6a); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+  .ico.locked { background: linear-gradient(135deg, #2a3140, #1c222d); position: relative; filter: grayscale(1); }
+  .ico.locked::after { content: "🔒"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; opacity: .5; }
+  .an { min-width: 0; }
+  .an .t { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .an .d { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .glob { font-family: var(--font-mono); font-size: 12px; text-align: right; color: var(--ink-dim); }
+  .glob.rare { color: var(--gold); }
+  .imp { font-family: var(--font-mono); font-size: 12.5px; text-align: right; }
+  .imp.up { color: var(--green); } .imp.down { color: var(--red); } .imp.zero { color: var(--muted); }
+  .add { width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel-2); color: var(--ink-dim); font-size: 14px; }
+  .add.on { background: var(--accent); border-color: var(--accent); color: var(--ground); font-weight: 700; }
+
+  /* optimizer row */
+  .orow { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid var(--border-soft); border-radius: 8px; margin-bottom: 6px; background: var(--panel-2); }
+  .orow__b { flex: 1; min-width: 0; }
+  .orow__g { font-size: 13px; color: var(--ink); }
+  .orow__d { font-size: 11.5px; color: var(--muted); }
+  .pill2 { font-family: var(--font-mono); font-size: 10.5px; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--ink-dim); }
+  .subrow { display: flex; justify-content: space-between; font-size: 11.5px; padding: 3px 0 3px 44px; color: var(--ink-dim); }
+  .subrow .g { font-family: var(--font-mono); color: var(--gold); }
+
+  .note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .callout { display: flex; gap: 12px; background: rgba(231,180,100,.06); border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; padding: 14px 16px; margin-top: 14px; }
+  .callout .l { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); white-space: nowrap; padding-top:2px; }
+  .callout p { margin: 0; font-size: 13.5px; color: var(--ink-dim); }
+
+  .foot { margin-top: 26px; border-top: 1px solid var(--border-soft); padding-top: 20px; }
+  .foot h3 { font-size: 15px; color: #eaf1f7; margin: 0 0 10px; }
+  .steps { margin: 0; padding-left: 20px; color: var(--ink-dim); font-size: 14px; }
+  .steps li { margin: 5px 0; }
+  .steps code { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+</style>
+
+<div class="page"><div class="wrap">
+  <p class="eyebrow">Refinements &middot; Plan v2</p>
+  <h1>Six fixes to the plan &amp; impact UI</h1>
+  <p class="lede">Everything you flagged, grouped. Three of these (1–3) share one root cause: the impact of a
+    <em>single</em> achievement is only meaningful in a game you&rsquo;re already completing. The rest are
+    display upgrades. Before/after mockups below.</p>
+
+  <!-- 1 -->
+  <div class="change">
+    <div class="change__n">01</div>
+    <h2>Impact never hides — no more &ldquo;0 until you click&rdquo;</h2>
+    <div class="pf">
+      <div class="prob"><span class="lbl">Now</span><p>Locked achievements in <b>unstarted</b> games show <b>~0</b>, then a real number appears only after you add one — because the first achievement in a fresh game barely moves (or lowers) your average, and we were masking that as &ldquo;~0&rdquo;.</p></div>
+      <div class="fix"><span class="lbl">Fix</span><p>Always show the <b>true signed impact</b>: green <b>+</b>, red <b>−</b> (starting a big game one-at-a-time really does dip your average), grey <b>0.00</b> only for 100+ achievement games where one unlock genuinely rounds to nothing. Plus a one-line legend.</p></div>
+    </div>
+    <div class="demo">
+      <div class="demo__col before"><div class="demo__tag">Before</div>
+        <div class="arow slim"><div class="ico locked"></div><div class="an"><div class="t">Deck the trucks!</div></div><div class="imp zero">~0</div></div>
+        <div class="arow slim"><div class="ico locked"></div><div class="an"><div class="t">MORE</div></div><div class="imp zero">~0</div></div>
+        <div class="arow slim"><div class="ico locked"></div><div class="an"><div class="t">MEET THE DRAGON</div></div><div class="imp zero">~0</div></div>
+      </div>
+      <div class="demo__col after"><div class="demo__tag">After</div>
+        <div class="arow slim"><div class="ico locked"></div><div class="an"><div class="t">Deck the trucks!</div><div class="d">Clustertruck · unstarted, 19 achievements</div></div><div class="imp down">−0.24</div></div>
+        <div class="arow slim"><div class="ico locked"></div><div class="an"><div class="t">MORE</div><div class="d">SUPERHOT MCD · unstarted</div></div><div class="imp down">−0.24</div></div>
+        <div class="arow slim"><div class="ico locked"></div><div class="an"><div class="t">MEET THE DRAGON</div><div class="d">SHENZHEN I/O · started 1/6</div></div><div class="imp up">+0.16</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="change">
+    <div class="change__n">02</div>
+    <h2>&ldquo;Games worth starting&rdquo; plans the whole game, not one achievement</h2>
+    <div class="pf">
+      <div class="prob"><span class="lbl">Now</span><p>Clicking a game here adds <b>one</b> achievement. That&rsquo;s right for Counter-Strike 2 (its only achievement = instant 100%), but for a 48-achievement game one unlock is meaningless — hence the confusion.</p></div>
+      <div class="fix"><span class="lbl">Fix</span><p>The primary action becomes <b>Plan to 100%</b> (a &ldquo;finish&rdquo; move) and the number shown is the <b>+avg at 100%</b>. One-achievement games behave exactly as before. A secondary &ldquo;+ just the easiest one&rdquo; stays available, clearly labelled with its real (often negative) single-unlock impact.</p></div>
+    </div>
+    <div class="demo">
+      <div class="demo__col before"><div class="demo__tag">Before</div>
+        <div class="orow"><button class="add">+</button><div class="orow__b"><div class="orow__g">Disco Elysium</div><div class="orow__d">45 achievements · easiest 32.4%</div></div><span class="imp down">−0.29</span></div>
+        <div class="note">Adds 1 achievement → lowers your average. Confusing.</div>
+      </div>
+      <div class="demo__col after"><div class="demo__tag">After</div>
+        <div class="orow"><button class="add">+</button><div class="orow__b"><div class="orow__g">Disco Elysium</div><div class="orow__d">Plan to 100% · 45 achievements</div></div><span class="imp up">+0.62</span></div>
+        <div class="note">Toggle plans the full game. &ldquo;+ easiest one (−0.29)&rdquo; still available underneath.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="change">
+    <div class="change__n">03</div>
+    <h2>Almost-perfect games list the last achievements &amp; their global %</h2>
+    <div class="pf">
+      <div class="fix"><span class="lbl">Add</span><p>Each near-perfect game expands to show the <b>remaining</b> achievements with their global completion % — so you can see if that &ldquo;1 left&rdquo; is a 40% gimme or a 0.8% nightmare before committing.</p></div>
+    </div>
+    <div class="demo" style="grid-template-columns:1fr">
+      <div class="demo__col after"><div class="demo__tag">After</div>
+        <div class="orow"><button class="add on">✓</button><div class="orow__b"><div class="orow__g">Opus Magnum &middot; 1 left, at 83%</div><div class="orow__d">Plan to 100%</div></div><span class="imp up">+0.16</span></div>
+        <div class="subrow"><span>The Way of the Philosopher</span><span class="g">0.00% global — brutal</span></div>
+        <div class="orow" style="margin-top:8px"><button class="add">+</button><div class="orow__b"><div class="orow__g">Keep Talking and Nobody Explodes &middot; 1 left</div><div class="orow__d">Plan to 100%</div></div><span class="imp up">+0.09</span></div>
+        <div class="subrow"><span>Seasoned Traveller</span><span class="g">1.0% global — hard</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="change">
+    <div class="change__n">04</div>
+    <h2>Library drill-in: descriptions, impact at top, icons</h2>
+    <div class="pf">
+      <div class="fix"><span class="lbl">Add</span><p>Expanding a game now shows each achievement&rsquo;s <b>description</b>, and a header line stating what <b>each achievement is worth</b> to your average for this game. Icons too (see #6).</p></div>
+    </div>
+    <div class="demo" style="grid-template-columns:1fr">
+      <div class="demo__col after"><div class="demo__tag">After — expanded game</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px">
+          <span>15/17 unlocked</span><span>Each achievement here ≈ <b style="color:var(--green)">+0.056</b> · <span style="color:var(--accent)">Plan to 100%</span></span>
+        </div>
+        <div class="arow"><div class="ico"></div><div class="an"><div class="t">✓ Getting Your Feet Wet</div><div class="d">Take your first breath of fresh air on the surface</div></div><div class="glob">89.7%</div><div class="imp up">—</div><span></span></div>
+        <div class="arow"><div class="ico locked"></div><div class="an"><div class="t">Leave Only Time Capsules</div><div class="d">Scan 100% of the biological life forms</div></div><div class="glob rare">14.1%</div><div class="imp up">+0.056</div><button class="add">+</button></div>
+        <div class="arow"><div class="ico locked"></div><div class="an"><div class="t">Go Among the Stars</div><div class="d">Escape the planet aboard the rocket</div></div><div class="glob rare">14.1%</div><div class="imp up">+0.056</div><button class="add">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="change">
+    <div class="change__n">05</div>
+    <h2>Selecting an achievement shows it selected everywhere</h2>
+    <div class="pf">
+      <div class="fix"><span class="lbl">Ensure</span><p>Add an achievement in the <b>Library</b> and it reads <b>✓</b> in the Achievements list, Rarity walls, and the drawer — one shared identity (<code>appid:apiName</code>). The Optimizer&rsquo;s game suggestions will reflect &ldquo;in plan&rdquo; when their target achievement (or a <em>finish</em>) is planned, so nothing looks unselected when it isn&rsquo;t.</p></div>
+    </div>
+    <div class="note">This mostly works today for specific achievements; the fix reconciles the Optimizer&rsquo;s game-level suggestions with per-achievement selections so the states never disagree.</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="change">
+    <div class="change__n">06</div>
+    <h2>Achievement icons</h2>
+    <div class="pf">
+      <div class="prob"><span class="lbl">Catch</span><p>Icon URLs come from a <b>different</b> Steam endpoint (<code style="font-family:var(--font-mono);color:var(--gold)">GetSchemaForGame</code>) that the collector doesn&rsquo;t call yet — so they aren&rsquo;t in your <code style="font-family:var(--font-mono);color:var(--gold)">steam_data.json</code>.</p></div>
+      <div class="fix"><span class="lbl">Fix</span><p>Add one schema call per game to the collector (stores <b>icon</b> for unlocked + <b>gray icon</b> for locked), then <b>re-run it once</b> (~154 extra calls, a few minutes). Images load straight from Steam&rsquo;s CDN in the browser — no CORS issue. Then icons appear in the list, Library, Rarity, and plan drawer.</p></div>
+    </div>
+    <div class="callout"><span class="l">Decision</span><p>This is the only change needing a data re-fetch. Want me to add icons now (re-run the collector), or ship 1–5 first and add icons after?</p></div>
+  </div>
+
+  <div class="foot">
+    <h3>Build order</h3>
+    <ol class="steps">
+      <li>Impact column always signed + legend <span style="color:var(--muted)">(#1)</span></li>
+      <li>Optimizer &ldquo;games worth starting&rdquo; → Plan-to-100% + secondary easiest <span style="color:var(--muted)">(#2)</span></li>
+      <li>Near-perfect expansions with global % <span style="color:var(--muted)">(#3)</span></li>
+      <li>Library descriptions + per-game impact header <span style="color:var(--muted)">(#4)</span></li>
+      <li>Verify + reconcile global selection <span style="color:var(--muted)">(#5)</span></li>
+      <li>Icons: collector schema fetch + re-run + UI <span style="color:var(--muted)">(#6, if you say go)</span></li>
+    </ol>
+  </div>
+</div></div>

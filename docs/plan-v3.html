@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Achievement Atlas — Refresh plan (v3)</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#141b26; --panel2:#0f1520; --line:#222c3a;
+    --ink:#d3dde8; --dim:#9fb0c2; --faint:#6f8195;
+    --accent:#66c0f4; --gold:#e7b464; --green:#7bd88f; --red:#e07a7a;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:0 20px 90px}
+  .wrap{max-width:920px;margin:0 auto}
+  header.top{padding:44px 0 20px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  h1{font-size:30px;margin:8px 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--dim);max-width:60ch}
+  h2{font-size:20px;margin:38px 0 4px;letter-spacing:-.01em}
+  .tagline{color:var(--faint);font-size:13px;margin:0 0 14px}
+  h3{font-size:15px;margin:20px 0 6px;color:#eaf1f7}
+  p{margin:8px 0}
+  code{background:#0c121b;border:1px solid var(--line);border-radius:5px;padding:1px 6px;
+    font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cfe3f5}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;margin:14px 0}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+    border-radius:50%;background:var(--accent);color:#04121d;font-weight:800;font-size:14px;margin-right:10px;flex:0 0 auto}
+  .row{display:flex;align-items:flex-start}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+  .mini{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+  .mini h4{margin:0 0 4px;font-size:13px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+  .now{border-left:3px solid var(--faint)}
+  .fix{border-left:3px solid var(--green)}
+  ul{margin:8px 0;padding-left:22px}
+  li{margin:4px 0}
+  .files{color:var(--dim);font-size:13px}
+  .files code{font-size:12px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;
+    border:1px solid var(--line);color:var(--dim);margin-left:8px;vertical-align:middle}
+  .pill--rec{background:rgba(123,216,143,.12);border-color:rgba(123,216,143,.4);color:var(--green)}
+  .nav-demo{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .tab{font-size:13px;padding:5px 12px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--dim)}
+  .tab.gone{text-decoration:line-through;opacity:.45;color:var(--red)}
+  .tab.new{border-color:var(--accent);color:var(--accent)}
+  .tab.hot{border-color:var(--gold);color:var(--gold)}
+  .opt{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;background:var(--panel2)}
+  .opt h4{margin:0 0 2px;font-size:15px;color:#eaf1f7}
+  .opt .why{color:var(--dim);font-size:13px}
+  .opt.pick{border-color:rgba(123,216,143,.5);background:rgba(123,216,143,.06)}
+  .badge{font-size:11px;font-weight:700;color:var(--green);border:1px solid rgba(123,216,143,.4);
+    padding:1px 8px;border-radius:20px;margin-left:8px}
+  .swatch{font-family:ui-monospace,monospace;font-size:12px;color:var(--faint)}
+  .q{background:linear-gradient(180deg,rgba(102,192,244,.08),transparent);border:1px solid rgba(102,192,244,.3)}
+  .q ol{margin:6px 0}
+  .imp-up{color:var(--green);font-family:ui-monospace,monospace}
+  .imp-down{color:var(--red);font-family:ui-monospace,monospace}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+  .foot{color:var(--faint);font-size:13px;margin-top:26px}
+  b{color:#eaf1f7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Achievement Atlas · Refresh</div>
+  <h1>Five changes, one pass</h1>
+  <p class="sub">Everything below is scoped against the current code. Nothing here is built yet — this is the plan to approve. Recommendations are marked <span class="pill pill--rec">recommended</span>; a couple of genuine choices are collected at the bottom.</p>
+</header>
+
+<!-- 1 -->
+<h2><span class="num">1</span>“Plan to 100%” should tick every box</h2>
+<p class="tagline">Library drill-in · Optimizer finish buttons</p>
+
+<div class="grid2">
+  <div class="mini now">
+    <h4>Now</h4>
+    <p>Clicking <b>Plan to 100%</b> stores one compact <code>{kind:"finish"}</code> item. In the drill list that <em>hides</em> every individual add-button (<code>!finishOn</code>), so the achievements below never show a check — and you can’t drop just one.</p>
+  </div>
+  <div class="mini fix">
+    <h4>After</h4>
+    <p>“Plan to 100%” becomes a <b>check-all</b>: it adds one <code>achievement</code> item for <em>every</em> locked achievement in the game. All boxes tick. Un-tick any single one and it just leaves the plan; the button flips back from “✓ Planning 100%”.</p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>How</h3>
+  <ul>
+    <li>Retire <code>finish</code> as a <em>stored</em> item. The button’s handler maps the game’s locked achievements → individual <code>achievement</code> items and merges them in (and clears them when all are already present).</li>
+    <li>“All locked achievements planned?” replaces the old <code>plan.has(finishItem)</code> check for the button’s ✓ state — a cheap set-membership test.</li>
+    <li>The same swap applies to the Optimizer’s two finish buttons (near-perfect + worth-starting), so a planned game shows each of its remaining achievements ticked there too.</li>
+    <li>Projection / impact / markdown lose their <code>finish</code> branch and get simpler — a game at 100% is just “all its achievements are in the plan.”</li>
+  </ul>
+  <p class="files"><b>Files:</b> <code>lib/plan.ts</code> (drop finish branch), <code>views/Library.tsx</code>, <code>views/Optimizer.tsx</code>, <code>context/PlanContext.tsx</code> (add a <code>mergeMany</code>/<code>removeMany</code> helper).</p>
+  <p class="files"><b>Trade-off:</b> a 100-achievement game adds 100 plan items instead of 1, so the plan-pill count climbs. That’s honest (“check all” really did check all), and the Markdown export already groups by game, so the download still reads as one tidy “Game — 100%” block.</p>
+</div>
+
+<!-- 2 -->
+<h2><span class="num">2</span>Percentages to 5 decimal places</h2>
+<p class="tagline">site-wide</p>
+
+<div class="card">
+  <p>Right now decimals are hardcoded ad-hoc: global rates at <code>.toFixed(1)</code>, impact at <code>.toFixed(3)</code>, the exact mean at <code>.toFixed(2)</code>. Tiny impact values like <span class="imp-up">+0.004</span> currently round to <span class="imp-up">+0.00</span> in some spots — 5 decimals fixes exactly that.</p>
+  <h3>How</h3>
+  <ul>
+    <li>One formatter in <code>lib/format.ts</code>: <code>pct5(n)</code> → <code>n.toFixed(5) + "%"</code>, plus <code>num5()</code> for bare impact deltas. Every call site points at it.</li>
+    <li>Applies to: <b>global completion rates</b> (rarity %), <b>exact mean &amp; projected mean</b>, <b>impact deltas</b> everywhere (Achievements column, Optimizer tags, Library header).</li>
+    <li><b>Stays integer:</b> a game’s own completion % — that’s <em>floored</em> by definition (the Steam method), so “33.00000%” would be noise. The displayed account average is also a floored integer by Steam’s rule; the 5-decimal precision shows up right next to it as the <em>exact</em> mean.</li>
+  </ul>
+  <div class="mini now" style="margin-top:10px">
+    <h4>Data caveat — worth a one-line collector tweak</h4>
+    <p>The collector currently rounds global rates to 4 dp (<code>round(rate, 4)</code>), so the 5th decimal would always read <code>0</code>. I’ll bump that to <code>round(rate, 6)</code> (Steam returns ~8 dp) so the 5th digit is real. Re-run of the collector regenerates <code>steam_data.json</code> — ~4s.</p>
+  </div>
+  <p class="files"><b>Files:</b> <code>lib/format.ts</code>, <code>views/*</code> (swap fixed-decimals), <code>steam_collect.py</code> + <code>assets/collector.py</code> (rounding), regenerate JSON.</p>
+</div>
+
+<!-- 3 -->
+<h2><span class="num">3</span>A “How it’s calculated” page <span class="pill">new</span></h2>
+<p class="tagline">new tab · pure content</p>
+
+<div class="card">
+  <p>A calm explainer so the numbers stop being mysterious — and so the counter-intuitive bits are stated up front.</p>
+  <div class="grid2">
+    <div class="mini">
+      <h4>The method</h4>
+      <ul style="margin:4px 0">
+        <li>Only games with <b>≥1 unlock</b> count.</li>
+        <li>Each game’s % is <b>floored</b> (32.9 → 32).</li>
+        <li>Average those, then <b>floor again</b> for the badge number.</li>
+        <li>Worked example with your real numbers (exact mean vs displayed).</li>
+      </ul>
+    </div>
+    <div class="mini">
+      <h4>Warnings ⚠️</h4>
+      <ul style="margin:4px 0">
+        <li><b>Starting a new game lowers your average</b> — it joins the denominator at a low %. Temporary, but real.</li>
+        <li>Unlocking 1 of 80 may not move the floored integer at all.</li>
+        <li>A 100% game is worth the same as a 100% game with 5 achievements — count doesn’t matter, only the per-game %.</li>
+        <li>Perfect games are pure ballast that pull you up.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="files"><b>Files:</b> new <code>views/HowItWorks.tsx</code>, add key to <code>Nav.tsx</code>, route in the dashboard. Reuses the live <code>averageCompletion</code> numbers so the worked example is <em>your</em> data, not a toy.</p>
+</div>
+
+<!-- 4 -->
+<h2><span class="num">4</span>Consolidate: dissolve the Rarity tab</h2>
+<p class="tagline">fewer tabs · less flash</p>
+
+<div class="card">
+  <p>Rarity is two ideas wearing loud gradient cards. Both belong somewhere more useful:</p>
+  <ul>
+    <li><b>“Your rarest unlocks”</b> → moves into <b>Overview</b> as a quiet strip (small icon · name · game · plain % — no gradient cards). It’s a flex stat; it belongs on the profile.</li>
+    <li><b>“Easy wins you skipped”</b> → moves into the <b>Optimizer</b>, where impact/effort thinking already lives. Each becomes a real add-to-plan row with its impact value, right beside “best single unlocks.”</li>
+  </ul>
+
+  <h3>Nav: before → after</h3>
+  <div class="nav-demo">
+    <span class="tab">Overview</span><span class="tab">Achievements</span><span class="tab">Library</span>
+    <span class="tab">Optimizer</span><span class="tab gone">Rarity</span><span class="tab">Trends</span>
+  </div>
+  <div class="nav-demo">
+    <span class="tab hot">Overview <span class="swatch">+rarest</span></span><span class="tab">Achievements</span><span class="tab">Library</span>
+    <span class="tab hot">Optimizer <span class="swatch">+easy wins</span></span><span class="tab">Trends</span><span class="tab new">How it works</span>
+  </div>
+  <p class="files">Net: still 6 tabs, but one dead-end flex page is gone and its content earns its place. (If you’d rather go leaner, Trends could also fold into Overview — see the open questions.)</p>
+  <p class="files"><b>Files:</b> delete/retire <code>views/Rarity.tsx</code>, extend <code>ProfileOverview.tsx</code> + <code>Optimizer.tsx</code>, trim <code>Nav.tsx</code>, restyle in <code>styles.css</code> (drop <code>.rcard</code> gradients for a compact list).</p>
+</div>
+
+<!-- 5 -->
+<h2><span class="num">5</span>Rethink the Trends</h2>
+<p class="tagline">keep #1 &amp; #3 · replace the histogram · maybe add one</p>
+
+<div class="card">
+  <p><b>Keep:</b> “Achievements unlocked over time” (cumulative area) and “Playtime vs completion” (scatter). <b>Cut:</b> the completion-distribution histogram — abstract buckets that don’t tell you what to <em>do</em>. Candidates to replace it:</p>
+
+  <div class="opt pick">
+    <h4>A · Your average, reconstructed over time <span class="badge">recommended</span></h4>
+    <p class="why">Replay every unlock by its timestamp and redraw the <em>Steam average</em> month by month. You literally see it dip each time you started a new game and climb as you finished things — it makes the whole app’s thesis (and the §3 warning) visible. On-theme, uses data we already have.</p>
+  </div>
+
+  <div class="opt">
+    <h4>B · Rarity profile of what you own</h4>
+    <p class="why">Histogram of <em>your unlocked</em> achievements bucketed by global rarity (ultra-rare &lt;1% … common &gt;50%). A “how rare is my shelf” flex chart — replaces the confusing one with a similar shape but a personal, legible meaning.</p>
+  </div>
+
+  <div class="opt">
+    <h4>C · Closest to 100%</h4>
+    <p class="why">Horizontal bars of the games you’re nearest to finishing (fewest achievements remaining). Directly actionable and it rhymes with the Optimizer’s “almost-perfect” list.</p>
+  </div>
+
+  <div class="opt">
+    <h4>D · Unlock cadence heatmap</h4>
+    <p class="why">GitHub-style year×month grid of unlock counts — when you binge vs go quiet. Pretty, a little decorative; less actionable than A–C.</p>
+  </div>
+
+  <p class="files"><b>My pick:</b> replace the histogram with <b>A</b>, and it pairs naturally under the existing cumulative chart. Happy to do <b>A + B</b> if you want two fresh ones. <b>Files:</b> <code>views/Trends.tsx</code>.</p>
+</div>
+
+<hr />
+
+<!-- open questions -->
+<div class="card q">
+  <h3>Open questions before I build</h3>
+  <ol>
+    <li><b>Trends replacement</b> — go with <b>A (average-over-time)</b>? Or A+B, or a different pick?</li>
+    <li><b>Decimal scope</b> — 5 dp on global rates + means + impacts, leaving floored per-game/account % as integers (recommended). Or force 5 dp literally everywhere?</li>
+    <li><b>Leaner nav</b> — also fold <b>Trends into Overview</b> for a true dashboard (down to 5 tabs), or keep Trends standalone?</li>
+  </ol>
+  <p style="color:var(--dim);margin-bottom:0">Answer these (or just say “do it” for the recommended path) and I’ll implement all five in one pass, then verify end-to-end.</p>
+</div>
+
+<p class="foot">Scoped 2026-07-13 against the live code in <code>web/</code>. Order of work: §2 formatter first (unblocks the rest), then §1, §4, §3, §5 — build once, one Playwright pass, one collector re-run.</p>
+
+</div>
+</body>
+</html>

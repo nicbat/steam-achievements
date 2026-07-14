@@ -1,0 +1,12 @@
+# dependencies / build
+node_modules
+dist
+*.tsbuildinfo
+*.local
+.DS_Store
+
+# secrets & personal data (kept locally, never committed)
+collector/key.env
+key.env
+steam_data.json
+collector/steam_data.json

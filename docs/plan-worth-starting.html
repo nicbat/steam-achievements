@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Worth-Starting Finder — feature plan</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#141b26; --panel2:#0f1520; --line:#222c3a;
+    --ink:#d3dde8; --dim:#9fb0c2; --faint:#6f8195;
+    --accent:#66c0f4; --gold:#e7b464; --green:#7bd88f; --red:#e07a7a;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:0 20px 90px}
+  .wrap{max-width:920px;margin:0 auto}
+  header.top{padding:44px 0 20px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  h1{font-size:30px;margin:8px 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--dim);max-width:64ch}
+  h2{font-size:20px;margin:38px 0 4px;letter-spacing:-.01em}
+  .tagline{color:var(--faint);font-size:13px;margin:0 0 14px}
+  h3{font-size:15px;margin:20px 0 6px;color:#eaf1f7}
+  p{margin:8px 0}
+  code{background:#0c121b;border:1px solid var(--line);border-radius:5px;padding:1px 6px;
+    font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cfe3f5}
+  pre{background:#0c121b;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto;
+    font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cfe3f5}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:14px 0}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;
+    background:var(--accent);color:#04121d;font-weight:800;font-size:14px;margin-right:10px;flex:0 0 auto}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+  .mini{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+  .mini h4{margin:0 0 4px;font-size:13px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+  ul{margin:8px 0;padding-left:22px} li{margin:4px 0}
+  .files{color:var(--dim);font-size:13px}.files code{font-size:12px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid var(--line);color:var(--dim);margin-left:8px}
+  .pill--rec{background:rgba(123,216,143,.12);border-color:rgba(123,216,143,.4);color:var(--green)}
+  b{color:#eaf1f7}
+  .mock{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  .sliderrow{display:flex;align-items:center;gap:14px;margin:10px 0}
+  .sliderrow label{width:250px;font-size:13px;color:var(--dim);flex:0 0 auto}
+  .track{flex:1;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--accent) 0 var(--pct,40%),#26313f var(--pct,40%) 100%);position:relative}
+  .knob{position:absolute;top:50%;left:var(--pct,40%);width:16px;height:16px;border-radius:50%;background:#eaf1f7;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(102,192,244,.25)}
+  .sliderrow .val{width:56px;text-align:right;font-family:ui-monospace,monospace;font-size:13px;color:var(--accent)}
+  .grow{display:grid;grid-template-columns:34px 1fr 120px 92px 84px;gap:12px;align-items:center;
+    padding:10px 12px;border-top:1px solid var(--line);font-size:13px}
+  .grow:first-of-type{border-top:0}
+  .grow .g{color:var(--ink)} .grow .d{color:var(--faint);font-size:11px}
+  .grow .reach{font-family:ui-monospace,monospace;color:var(--green);text-align:right}
+  .grow .imp{font-family:ui-monospace,monospace;color:var(--green);text-align:right}
+  .grow .add{justify-self:end;border:1px solid var(--accent);color:var(--accent);border-radius:7px;padding:3px 9px;font-size:12px}
+  .chip{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--dim);font-family:ui-monospace,monospace}
+  .q{background:linear-gradient(180deg,rgba(102,192,244,.08),transparent);border:1px solid rgba(102,192,244,.3)}
+  .q ol{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+  .foot{color:var(--faint);font-size:13px;margin-top:26px}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:6px 0}
+  th,td{text-align:left;padding:5px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--faint);font-weight:600} td.r,th.r{text-align:right;font-family:ui-monospace,monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Achievement Atlas · New feature</div>
+  <h1>The Worth-Starting Finder</h1>
+  <p class="sub">Two sliders that answer one question: <b>which unplayed games would actually raise my average if I started them?</b> A game only helps if you can realistically clear a bigger slice of it than your current average — this finds exactly those. Plan, not built yet.</p>
+</header>
+
+<!-- concept -->
+<h2><span class="num">1</span>The idea</h2>
+<div class="card">
+  <p>Starting a game adds it to your average at whatever completion you reach. If you&rsquo;ll only scrape 10% of it, it <b>drags you down</b>; if you can comfortably clear 60%, it <b>lifts you up</b>. The trick is estimating &ldquo;what can I realistically reach?&rdquo; before committing.</p>
+  <p>Proxy for &ldquo;realistically reachable&rdquo;: <b>achievements a lot of other players already have</b>. An achievement at 45% global is usually a natural play-through unlock; one at 0.3% is a grind. So we count how many of a game&rsquo;s achievements sit above a rarity floor, and ask whether that&rsquo;s a big enough share.</p>
+  <div class="grid2">
+    <div class="mini">
+      <h4>Slider N — rarity floor</h4>
+      <p style="margin:2px 0">&ldquo;Only count achievements at least <b>N%</b> global.&rdquo; Your definition of <i>easy enough to actually get</i>. Higher N = stricter.</p>
+    </div>
+    <div class="mini">
+      <h4>Slider X — completion target</h4>
+      <p style="margin:2px 0">&ldquo;Show games I could take to at least <b>X%</b>.&rdquo; Defaults to your current average, since anything above that is a net lift.</p>
+    </div>
+  </div>
+</div>
+
+<!-- algorithm -->
+<h2><span class="num">2</span>The algorithm</h2>
+<div class="card">
+<pre>for each candidate game g (unstarted, has achievements):
+    easy      = count(a in g.achievements where a.global_rate >= N)   // "reachable" unlocks
+    reachable = 100 * easy / g.achievements_total                     // % you'd plausibly clear
+    qualifies = reachable >= X
+
+    // where it lands you: this game enters your average at floor(reachable)%
+    lift  = reachable > yourDisplayedAverage        // green if it pulls you up
+    impact = projected average gain if you unlock those `easy` achievements   // plan-aware, exact</pre>
+  <p>Sort qualifying games by <b>reachable %</b> (default) or by <b>projected impact</b>. Each row can add the <b>reachable set</b> (just the ≥N achievements) to your plan in one click — the most honest &ldquo;worth starting&rdquo; move — with the existing <b>Plan to 100%</b> and <b>+ easiest</b> still available.</p>
+</div>
+
+<!-- real numbers -->
+<h2><span class="num">3</span>On your actual library</h2>
+<div class="card">
+  <p>Your displayed average is <b>32%</b>; you have <b>47</b> unstarted games with achievements. How many clear the bar at a few slider settings:</p>
+  <table>
+    <thead><tr><th>N (rarity floor)</th><th>X (target)</th><th class="r">Games that qualify</th><th>Top hit</th></tr></thead>
+    <tbody>
+      <tr><td>≥ 25%</td><td>≥ 32% (your avg)</td><td class="r">14</td><td>Titanfall® 2 — 72% reachable of 50</td></tr>
+      <tr><td>≥ 50%</td><td>≥ 32%</td><td class="r">3</td><td>SUPERHOT: MCD — 50% of 14</td></tr>
+      <tr><td>≥ 10%</td><td>≥ 50%</td><td class="r">19</td><td>Before Your Eyes — 91% of 11</td></tr>
+    </tbody>
+  </table>
+  <p class="files">Dragging N up narrows to &ldquo;sure things&rdquo;; dragging X up demands a bigger lift. The defaults (N 25, X = your avg) surface a tight, actionable 14.</p>
+</div>
+
+<!-- mockup -->
+<h2><span class="num">4</span>What it looks like</h2>
+<div class="mock">
+  <div style="font-size:13px;color:var(--faint);margin-bottom:10px">Optimizer &rsaquo; <b style="color:var(--ink)">Games worth starting</b></div>
+  <div class="sliderrow">
+    <label>Only count achievements ≥ <b style="color:var(--ink)">25%</b> global</label>
+    <div class="track" style="--pct:25%"><span class="knob"></span></div>
+    <span class="val">25%</span>
+  </div>
+  <div class="sliderrow">
+    <label>Show games I could reach ≥ <b style="color:var(--ink)">32%</b></label>
+    <div class="track" style="--pct:32%"><span class="knob"></span></div>
+    <span class="val">32%</span>
+  </div>
+  <div style="margin:6px 0 12px"><span class="chip">14 games qualify</span> <span class="chip">sort: reachable ▼</span></div>
+
+  <div style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
+    <div class="grow">
+      <span>+</span>
+      <span><span class="g">Titanfall® 2</span><br><span class="d">36 of 50 achievements ≥ 25% · reach 72%</span></span>
+      <span class="reach">72%</span><span class="imp">+0.181</span>
+      <span class="add">Plan easy set</span>
+    </div>
+    <div class="grow">
+      <span>+</span>
+      <span><span class="g">SUPERHOT: MIND CONTROL DELETE</span><br><span class="d">10 of 14 ≥ 25% · reach 71%</span></span>
+      <span class="reach">71%</span><span class="imp">+0.178</span>
+      <span class="add">Plan easy set</span>
+    </div>
+    <div class="grow">
+      <span>+</span>
+      <span><span class="g">Clustertruck</span><br><span class="d">12 of 19 ≥ 25% · reach 63%</span></span>
+      <span class="reach">63%</span><span class="imp">+0.165</span>
+      <span class="add">Plan easy set</span>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--faint);margin-top:8px">Reachable % in green when it&rsquo;s above your average (a net lift). &ldquo;Plan easy set&rdquo; adds only the ≥N achievements.</div>
+</div>
+
+<!-- integration + edges -->
+<h2><span class="num">5</span>How it fits &amp; the edges</h2>
+<div class="grid2">
+  <div class="card" style="margin:0">
+    <h3 style="margin-top:0">Integration</h3>
+    <ul>
+      <li>Replaces the static top-15 <b>&ldquo;Games worth starting&rdquo;</b> list with this slider-driven one.</li>
+      <li>Keeps the check-all <b>Plan to 100%</b> and <b>+ easiest</b> actions; adds <b>Plan easy set</b> (the ≥N subset).</li>
+      <li>Slider positions persist (localStorage), like the plan pin.</li>
+      <li>All impacts stay <b>plan-aware</b> (the fix from this session) so numbers agree with the rest of the app.</li>
+    </ul>
+  </div>
+  <div class="card" style="margin:0">
+    <h3 style="margin-top:0">Edge cases</h3>
+    <ul>
+      <li>Achievements with <b>no global rate</b> don&rsquo;t count as easy (unknown difficulty).</li>
+      <li>X below your average surfaces games that&rsquo;d still drag you down — I&rsquo;ll <b>mark those amber</b> rather than hide them.</li>
+      <li>Optional toggle to <b>include started-but-low games</b>, not just untouched ones.</li>
+      <li>Empty result set shows a &ldquo;loosen the sliders&rdquo; hint.</li>
+    </ul>
+  </div>
+</div>
+
+<hr />
+
+<div class="card q">
+  <h3>Open questions before I build</h3>
+  <ol>
+    <li><b>Default sort</b> — by <b>reachable %</b> (recommended, most intuitive) or by <b>projected impact</b>?</li>
+    <li><b>Primary button</b> — should the one-click action be <b>Plan easy set</b> (just the ≥N achievements, recommended) or keep <b>Plan to 100%</b> as primary?</li>
+    <li><b>Scope</b> — unstarted games only (recommended), or include started-but-below-target games with a toggle?</li>
+    <li><b>X default</b> — snap to your live average (recommended), or a fixed 50%?</li>
+  </ol>
+  <p style="color:var(--dim);margin-bottom:0">Say &ldquo;do it&rdquo; for the recommended path, or answer any of these and I&rsquo;ll implement it into the Optimizer.</p>
+</div>
+
+<p class="foot">Scoped 2026-07-14 against the live Optimizer. Numbers above are from your current <code>steam_data.json</code> (47 unstarted games, 32% average).</p>
+
+</div>
+</body>
+</html>

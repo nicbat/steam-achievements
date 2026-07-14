@@ -1,0 +1,435 @@
+<style>
+  :root {
+    --ground: #10141b;
+    --ground-2: #0b0e14;
+    --panel: #171d28;
+    --panel-2: #1e2634;
+    --panel-3: #26303f;
+    --border: #2c3849;
+    --border-soft: #222c3a;
+    --ink: #d3dde8;
+    --ink-dim: #9fb0c2;
+    --muted: #6f8195;
+    --accent: #66c0f4;        /* steam blue */
+    --accent-deep: #2a6f9e;
+    --gold: #e7b464;          /* achievement / rarity */
+    --green: #8ec449;         /* unlocked / positive */
+    --red: #e06c6c;           /* rejected / caution */
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-display: "Segoe UI", var(--font-body);
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --maxw: 1020px;
+  }
+
+  * { box-sizing: border-box; }
+
+  .page {
+    background:
+      radial-gradient(1100px 500px at 78% -8%, rgba(102,192,244,0.10), transparent 60%),
+      radial-gradient(800px 500px at 0% 0%, rgba(231,180,100,0.05), transparent 55%),
+      var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(20px, 5vw, 64px) 20px 96px;
+  }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { opacity: 0; transform: translateY(12px); animation: rise .7s cubic-bezier(.2,.7,.3,1) forwards; }
+    .reveal:nth-child(2) { animation-delay: .06s; }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead { border-bottom: 1px solid var(--border-soft); padding-bottom: 34px; margin-bottom: 48px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--accent); opacity: .7; }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 6vw, 58px);
+    line-height: 1.02; letter-spacing: -0.02em; font-weight: 800;
+    margin: 0 0 18px; text-wrap: balance; color: #f2f7fb;
+  }
+  h1 .hl { color: var(--accent); }
+  .lede { font-size: clamp(16px, 2.2vw, 19px); color: var(--ink-dim); max-width: 60ch; margin: 0; }
+  .metarow {
+    display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 26px;
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--muted);
+  }
+  .metarow b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- sections ---------- */
+  section { margin-bottom: 56px; }
+  .sechead { display: flex; align-items: baseline; gap: 14px; margin-bottom: 22px; }
+  .sechead .num {
+    font-family: var(--font-mono); font-size: 13px; color: var(--accent);
+    font-weight: 600; letter-spacing: .05em;
+  }
+  h2 {
+    font-family: var(--font-display); font-size: clamp(21px, 3vw, 27px);
+    font-weight: 700; letter-spacing: -0.01em; margin: 0; color: #eaf1f7;
+  }
+  .sub { color: var(--muted); font-size: 15px; margin: 6px 0 0; max-width: 66ch; }
+  p { max-width: 72ch; }
+  p a, .link { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(102,192,244,.35); }
+  p a:hover, .link:hover { border-bottom-color: var(--accent); }
+
+  /* ---------- job cards ---------- */
+  .jobs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .job {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+  }
+  .job h3 { margin: 0 0 8px; font-size: 16px; color: #eaf1f7; letter-spacing: -0.01em; }
+  .job p { margin: 0; font-size: 14px; color: var(--ink-dim); }
+  .job .tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 12px; }
+
+  /* ---------- stat grid ---------- */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border-soft); border: 1px solid var(--border-soft); border-radius: 12px; overflow: hidden; }
+  .stat { background: var(--panel); padding: 18px 18px 16px; }
+  .stat .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 26px; font-weight: 600; color: #f2f7fb; line-height: 1.1; }
+  .stat .v.accent { color: var(--accent); }
+  .stat .v.gold { color: var(--gold); }
+  .stat .k { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+
+  .insight {
+    margin-top: 16px; display: flex; gap: 16px; align-items: flex-start;
+    background: linear-gradient(100deg, rgba(102,192,244,.10), rgba(102,192,244,.02));
+    border: 1px solid var(--accent-deep); border-radius: 12px; padding: 18px 20px;
+  }
+  .insight .badge { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--green); white-space: nowrap; padding-top: 2px; }
+  .insight p { margin: 0; font-size: 14.5px; color: var(--ink-dim); }
+  .insight b { color: var(--ink); }
+
+  /* ---------- flow steps ---------- */
+  .flow { display: grid; gap: 14px; }
+  .step { display: grid; grid-template-columns: 46px 1fr; gap: 18px; align-items: start; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+  .step .idx { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--ground); background: var(--accent); width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; }
+  .step h3 { margin: 0 0 6px; font-size: 17px; color: #eaf1f7; }
+  .step p { margin: 0 0 6px; font-size: 14.5px; color: var(--ink-dim); }
+  .step .note { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+  /* ---------- decision table ---------- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+  thead th { background: var(--panel-2); text-align: left; padding: 12px 16px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border-soft); color: var(--ink-dim); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.win td { background: rgba(142,196,73,.06); }
+  td .approach { color: var(--ink); font-weight: 600; }
+  .pill { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+  .pill.no { color: var(--red); background: rgba(224,108,108,.12); border: 1px solid rgba(224,108,108,.3); }
+  .pill.yes { color: var(--green); background: rgba(142,196,73,.12); border: 1px solid rgba(142,196,73,.35); }
+
+  .callout { display: flex; gap: 14px; align-items: flex-start; border-left: 3px solid var(--gold); background: rgba(231,180,100,.06); padding: 16px 18px; border-radius: 0 10px 10px 0; margin-bottom: 20px; }
+  .callout .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); white-space: nowrap; padding-top: 2px; }
+  .callout p { margin: 0; font-size: 14.5px; color: var(--ink-dim); }
+
+  /* ---------- feature cards ---------- */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+  .feat { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .feat .h { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .feat .dot { width: 8px; height: 8px; border-radius: 3px; background: var(--accent); }
+  .feat.gold .dot { background: var(--gold); }
+  .feat.green .dot { background: var(--green); }
+  .feat h3 { margin: 0; font-size: 15.5px; color: #eaf1f7; letter-spacing: -0.01em; }
+  .feat ul { margin: 0; padding-left: 18px; }
+  .feat li { font-size: 13.5px; color: var(--ink-dim); margin: 5px 0; }
+  .feat li code { font-family: var(--font-mono); font-size: 12px; color: var(--accent); background: rgba(102,192,244,.08); padding: 1px 5px; border-radius: 4px; }
+
+  /* ---------- stack ---------- */
+  .stack { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px; font-size: 13.5px; color: var(--ink-dim); }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .chip .why { color: var(--muted); }
+
+  /* ---------- code ---------- */
+  pre { background: var(--ground-2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; overflow-x: auto; margin: 0; }
+  code, pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.65; }
+  pre code { color: #b9c7d6; }
+  .c-key { color: var(--accent); }
+  .c-str { color: var(--green); }
+  .c-num { color: var(--gold); }
+  .c-com { color: var(--muted); }
+  .c-cmd { color: #f2f7fb; }
+
+  /* ---------- roadmap ---------- */
+  .phases { display: grid; gap: 0; }
+  .phase { display: grid; grid-template-columns: 130px 1fr; gap: 22px; padding: 20px 0; border-top: 1px solid var(--border-soft); }
+  .phase:first-child { border-top: none; }
+  .phase .pnum { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: .04em; }
+  .phase .pnum b { display: block; color: #eaf1f7; font-size: 15px; font-family: var(--font-display); margin-top: 4px; letter-spacing: 0; }
+  .phase p { margin: 0; font-size: 14px; color: var(--ink-dim); }
+  .phase .deliver { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  footer { border-top: 1px solid var(--border-soft); padding-top: 26px; margin-top: 8px; color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; }
+  footer .privacy { color: var(--ink-dim); }
+  footer .privacy b { color: var(--green); }
+</style>
+
+<div class="page">
+<div class="wrap">
+
+  <header class="masthead reveal">
+    <p class="eyebrow">Project Plan &middot; Client-side Steam analytics</p>
+    <h1>Achievement&nbsp;Atlas <span class="hl">&mdash;</span> your completion,<br>mapped and optimized</h1>
+    <p class="lede">A zero-backend React site that turns a Steam data export into a browsable achievement dashboard &mdash; and tells you exactly which unlocks raise your completion rate the most.</p>
+    <div class="metarow">
+      <span>Working title &mdash; <b>renameable</b></span>
+      <span>Hosting cost &mdash; <b>$0</b></span>
+      <span>Data leaves your machine &mdash; <b>never</b></span>
+      <span>Reference dataset &mdash; <b>nicbat / 203 games</b></span>
+    </div>
+  </header>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">01</span><h2>The idea</h2></div>
+    <p class="sub">Three jobs, one static page. No server ever touches your API key or your library.</p>
+    <div class="jobs">
+      <div class="job">
+        <span class="tag">Get access</span>
+        <h3>Bring your own key</h3>
+        <p>A short onboarding step with a direct link to Steam&rsquo;s key page and a plain-language note on what the key can and can&rsquo;t do.</p>
+      </div>
+      <div class="job">
+        <span class="tag">Generate</span>
+        <h3>Run a local collector</h3>
+        <p>The site hands you a ready-to-run script that pulls your data <em>on your own machine</em> and writes a single <code>steam_data.json</code>.</p>
+      </div>
+      <div class="job">
+        <span class="tag">Explore</span>
+        <h3>Upload &amp; browse</h3>
+        <p>Drop the JSON in. Instantly get a dashboard, a fully sortable achievement list, rarity insights, and a completion-rate optimizer.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">02</span><h2>Grounded in real data</h2></div>
+    <p class="sub">Every number below is already produced by the collector we built &mdash; the viewer just has to render it.</p>
+    <div class="stats">
+      <div class="stat"><div class="v">203</div><div class="k">Owned games</div></div>
+      <div class="stat"><div class="v">2,751<span style="font-size:15px">h</span></div><div class="k">Total playtime</div></div>
+      <div class="stat"><div class="v gold">8,967</div><div class="k">Achievements tracked</div></div>
+      <div class="stat"><div class="v gold">1,353</div><div class="k">Unlocked</div></div>
+      <div class="stat"><div class="v accent">32%</div><div class="k">Avg completion (107 games)</div></div>
+      <div class="stat"><div class="v">8</div><div class="k">Perfect games</div></div>
+    </div>
+    <div class="insight">
+      <span class="badge">+0.62</span>
+      <p><b>The optimizer earns its keep.</b> Starting <b>Counter-Strike 2</b> &mdash; one achievement, 39.7% global &mdash; is a single instant-100% entry worth <b>+0.62 points</b> to your average, more than any other move. That&rsquo;s the kind of insight the viewer surfaces automatically.</p>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">03</span><h2>How it works</h2></div>
+    <p class="sub">A genuine three-step sequence &mdash; each step blocks on the one before it.</p>
+    <div class="flow">
+      <div class="step">
+        <span class="idx">1</span>
+        <div>
+          <h3>Grab a Steam Web API key</h3>
+          <p>The onboarding screen links straight to <span class="link">steamcommunity.com/dev/apikey</span>, explains the domain field (any placeholder like <code>localhost</code> works), and reassures the user the key is only ever used by the local script.</p>
+          <p class="note">UI state: &ldquo;key not yet needed in the browser&rdquo; &mdash; it&rsquo;s for the collector, not the site.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="idx">2</span>
+        <div>
+          <h3>Run the collector locally &rarr; steam_data.json</h3>
+          <p>The site provides the exact command and the script (the Python collector we already have, plus an optional zero-install Node/Deno one-liner). It resolves the user, walks every owned game, and writes one JSON file with playtime, per-game completion, and every achievement + global rarity + description.</p>
+          <p class="note">Runtime ~3&ndash;4 min for a 200-game library &middot; ~2 MB output.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="idx">3</span>
+        <div>
+          <h3>Upload the file into the viewer</h3>
+          <p>Drag-and-drop parses the JSON entirely in-browser and caches it in <code>localStorage</code>, so refreshes are instant and nothing is transmitted anywhere.</p>
+          <p class="note">Re-run step 2 anytime to refresh; the viewer diffs old vs new if a previous snapshot exists.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">04</span><h2>The one hard problem: CORS</h2></div>
+    <p class="sub">This decides the whole architecture, so it&rsquo;s worth being explicit.</p>
+    <div class="callout">
+      <span class="lbl">Constraint</span>
+      <p>The Steam Web API sends <b>no <code style="color:var(--gold)">Access-Control-Allow-Origin</code> header</b>. A browser therefore <em>cannot</em> call <code style="color:var(--gold)">api.steampowered.com</code> directly from a web page &mdash; the request is blocked before it leaves. So &ldquo;a script that runs in the web, locally, with no server&rdquo; can&rsquo;t be a browser <code>fetch</code>. Here&rsquo;s how each option really shakes out:</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Approach</th><th>Server cost</th><th>Key stays private</th><th>Verdict</th></tr>
+        </thead>
+        <tbody>
+          <tr class="win">
+            <td><span class="approach">Downloadable local script</span><br><span style="font-size:12.5px">user runs it, uploads JSON</span></td>
+            <td>None</td>
+            <td>Yes &mdash; key never leaves the machine</td>
+            <td><span class="pill yes">Recommended</span></td>
+          </tr>
+          <tr>
+            <td><span class="approach">Public CORS proxy</span><br><span style="font-size:12.5px">e.g. corsproxy.io in front of Steam</span></td>
+            <td>None</td>
+            <td><span style="color:var(--red)">No &mdash; key transits a third party</span></td>
+            <td><span class="pill no">Rejected</span></td>
+          </tr>
+          <tr>
+            <td><span class="approach">Serverless function</span><br><span style="font-size:12.5px">Netlify/Vercel edge relays the call</span></td>
+            <td>Small / free tier</td>
+            <td>Partial &mdash; key hits your function</td>
+            <td><span class="pill no">Adds a backend</span></td>
+          </tr>
+          <tr>
+            <td><span class="approach">Browser extension</span><br><span style="font-size:12.5px">host_permissions bypass CORS</span></td>
+            <td>None</td>
+            <td>Yes</td>
+            <td><span class="pill no">Heavy to build</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:16px; font-size:14.5px; color:var(--ink-dim);">The recommended path is exactly the shape you described: a local generator + an upload-and-view app. The site&rsquo;s job is to make the local script <em>effortless</em> to run &mdash; a copy button, an optional <code>npx</code>/<code>deno run</code> one-liner so there&rsquo;s no install, and a clear &ldquo;paste your key here&rdquo; field that only ever templates the local command.</p>
+  </section>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">05</span><h2>The viewer &mdash; what you get</h2></div>
+    <p class="sub">Scanned and operated, not read top-to-bottom: summary first, then drill-down.</p>
+    <div class="features">
+      <div class="feat">
+        <div class="h"><span class="dot"></span><h3>Profile overview</h3></div>
+        <ul>
+          <li>Avatar, level, account age, friends, total playtime</li>
+          <li>Headline tiles: games, achievements, avg completion, perfect count</li>
+          <li>Steam-accurate average (per-game floor, then mean)</li>
+        </ul>
+      </div>
+      <div class="feat gold">
+        <div class="h"><span class="dot"></span><h3>Completion optimizer</h3></div>
+        <ul>
+          <li>Best single unlocks in started games, ranked by <code>+avg</code></li>
+          <li>Almost-perfect games (1&ndash;3 from 100%)</li>
+          <li>New games worth starting &mdash; flags the ones that&rsquo;d <em>lower</em> your average</li>
+          <li>&ldquo;What-if&rdquo;: check achievements, watch the projected % move</li>
+        </ul>
+      </div>
+      <div class="feat">
+        <div class="h"><span class="dot"></span><h3>Achievement explorer</h3></div>
+        <ul>
+          <li>One searchable table of all 8,967, with description on expand</li>
+          <li>Sort by rarity, unlock date, game, locked/unlocked</li>
+          <li>Filter chips: unlocked, locked, ultra-rare (&lt;5%), recent</li>
+        </ul>
+      </div>
+      <div class="feat green">
+        <div class="h"><span class="dot"></span><h3>Rarity insights</h3></div>
+        <ul>
+          <li>Rarest achievements you <em>own</em> (flex wall)</li>
+          <li>Rarest you&rsquo;re missing, and the easy ones you skipped</li>
+          <li>Global-rarity distribution per game</li>
+        </ul>
+      </div>
+      <div class="feat">
+        <div class="h"><span class="dot"></span><h3>Library &amp; playtime</h3></div>
+        <ul>
+          <li>All games sortable by hours, completion, last played</li>
+          <li>Playtime-vs-completion scatter &mdash; spot neglected near-perfects</li>
+          <li>Per-platform hours (Windows / Mac / Linux)</li>
+        </ul>
+      </div>
+      <div class="feat">
+        <div class="h"><span class="dot"></span><h3>Timeline &amp; charts</h3></div>
+        <ul>
+          <li>Unlocks over time from <code>unlock_time</code></li>
+          <li>Completion-rate histogram across your library</li>
+          <li>All charts respect light/dark and reduced-motion</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">06</span><h2>Tech stack</h2></div>
+    <p class="sub">Deliberately boring where it can be, so the interesting parts stay reliable.</p>
+    <div class="stack">
+      <div class="chip"><b>Vite + React</b> <span class="why">&mdash; static build, deploy to GitHub Pages / Netlify free</span></div>
+      <div class="chip"><b>TypeScript</b> <span class="why">&mdash; type the JSON schema once, trust it everywhere</span></div>
+      <div class="chip"><b>TanStack Table</b> <span class="why">&mdash; virtualized 9k-row achievement grid</span></div>
+      <div class="chip"><b>Recharts</b> <span class="why">&mdash; scatter, histogram, timeline</span></div>
+      <div class="chip"><b>localStorage</b> <span class="why">&mdash; persist the upload, zero backend</span></div>
+      <div class="chip"><b>Collector: Python</b> <span class="why">&mdash; reuse what we built; optional Node/Deno twin</span></div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">07</span><h2>Data model</h2></div>
+    <p class="sub">Already emitted by <code>steam_collect.py</code> &mdash; the viewer&rsquo;s single source of truth.</p>
+    <pre><code><span class="c-key">"player"</span>: { persona_name, steam_level, xp, country, account_created, bans{} },
+<span class="c-key">"totals"</span>: { owned_games, total_playtime_hours, total_achievements, ... },
+<span class="c-key">"games"</span>: [
+  {
+    <span class="c-key">appid</span>, <span class="c-key">name</span>, <span class="c-key">playtime_forever_hours</span>, <span class="c-key">last_played</span>,
+    <span class="c-key">has_achievements</span>, <span class="c-key">achievements_unlocked</span>, <span class="c-key">achievements_total</span>,
+    <span class="c-key">completion_rate_pct</span>,
+    <span class="c-key">achievements</span>: [
+      { api_name, <span class="c-str">name</span>, <span class="c-str">description</span>, unlocked,
+        unlock_time, <span class="c-num">global_completion_rate_pct</span> }
+    ]
+  }
+]</code></pre>
+    <p style="margin-top:14px; font-size:14px; color:var(--muted);">Note for the average: Steam floors each game&rsquo;s percentage <em>before</em> averaging, so the viewer must compute <code>floor(100 &times; unlocked / total)</code> per game &mdash; that&rsquo;s the difference between showing 33% and the real 32%.</p>
+  </section>
+
+  <section class="reveal">
+    <div class="sechead"><span class="num">08</span><h2>Build roadmap</h2></div>
+    <div class="phases">
+      <div class="phase">
+        <div class="pnum">Phase 1<b>Scaffold + upload</b></div>
+        <div>
+          <p>Vite/React/TS project, JSON schema types, drag-and-drop upload with validation, localStorage persistence, and the profile-overview tiles.</p>
+          <p class="deliver">Deliverable: upload a file, see your headline stats.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pnum">Phase 2<b>Explorer + library</b></div>
+        <div>
+          <p>The virtualized achievement table with search/sort/filter, and the games library view with playtime sorting.</p>
+          <p class="deliver">Deliverable: browse and slice everything.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pnum">Phase 3<b>Optimizer + rarity</b></div>
+        <div>
+          <p>Port <code>analyze.py</code> to TS: the impact ranking, almost-perfect list, and interactive what-if projection; plus the rarity walls.</p>
+          <p class="deliver">Deliverable: the feature that makes this yours.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pnum">Phase 4<b>Onboarding + charts</b></div>
+        <div>
+          <p>Key-onboarding screen with the copy-ready local command, the charts (timeline, scatter, histogram), and a polish pass.</p>
+          <p class="deliver">Deliverable: shippable, shareable, deployed for $0.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="privacy"><b>Privacy by construction:</b> your key runs only in your local script; your JSON never leaves the browser.</span>
+    <span>Achievement Atlas &middot; plan v1</span>
+  </footer>
+
+</div>
+</div>
