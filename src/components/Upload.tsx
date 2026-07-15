@@ -68,7 +68,7 @@ export function Upload({ onLoad }: Props) {
           &#8681;
         </div>
         <p className="dropzone__title">Drop your steam_data.json here</p>
-        <p className="dropzone__hint">or click to choose a file &middot; everything stays in your browser</p>
+        <p className="dropzone__hint">or click to browse &middot; your data never leaves your browser</p>
         <input
           ref={inputRef}
           type="file"

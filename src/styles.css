@@ -760,6 +760,13 @@ body {
   font-size: 14px;
   color: var(--muted);
 }
+.landing__actions {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font-size: 14px;
+}
 .linkbtn {
   background: none;
   border: none;
@@ -1156,4 +1163,45 @@ body {
   color: var(--muted);
   font-weight: 400;
   opacity: 0.85;
+}
+
+/* ---------- demo banner ---------- */
+.demobar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink-dim);
+  font-size: 13.5px;
+}
+.demobar__dot {
+  color: var(--accent);
+}
+.demobar b {
+  color: var(--ink);
+}
+
+/* ---------- footer ---------- */
+.footer {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+  border-top: 1px solid var(--border-soft);
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.footer__link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer__link:hover {
+  text-decoration: underline;
 }

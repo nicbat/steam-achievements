@@ -184,10 +184,10 @@ export function Trends({ data }: { data: SteamData }) {
       </div>
 
       <div className="chart-card">
-        <h3 className="chart-card__title">Your average, reconstructed over time</h3>
+        <h3 className="chart-card__title">Your average over time</h3>
         <p className="chart-card__sub">
-          Your Steam average replayed unlock by unlock. It dips when you start a fresh game (it joins the average at a
-          low %) and climbs as you finish things.
+          Your Steam average, replayed unlock by unlock. It dips each time you start a new game and climbs as you
+          finish them.
         </p>
         <ResponsiveContainer width="100%" height={260}>
           <AreaChart data={avgTimeline} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
@@ -207,9 +207,9 @@ export function Trends({ data }: { data: SteamData }) {
       </div>
 
       <div className="chart-card">
-        <h3 className="chart-card__title">Rarity profile of your unlocks</h3>
+        <h3 className="chart-card__title">Rarity of your unlocks</h3>
         <p className="chart-card__sub">
-          How rare is your shelf? Every achievement you own, bucketed by how many other players have it.
+          Every achievement you&rsquo;ve earned, grouped by how many other players have it.
         </p>
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={rarityProfile} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
@@ -228,7 +228,7 @@ export function Trends({ data }: { data: SteamData }) {
 
       <div className="chart-card">
         <h3 className="chart-card__title">Unlock cadence</h3>
-        <p className="chart-card__sub">When you binge and when you go quiet — unlocks per month, lighter = more.</p>
+        <p className="chart-card__sub">Unlocks per month. Brighter months are busier.</p>
         <div className="heat">
           {heatmap.years.map((y) => (
             <div className="heat__row" key={y}>
@@ -260,7 +260,7 @@ export function Trends({ data }: { data: SteamData }) {
       <div className="chart-card">
         <h3 className="chart-card__title">Playtime vs completion</h3>
         <p className="chart-card__sub">
-          Top-left = lots of hours, low completion. Top-right of the plot = your grinds.
+          Each dot is a game. Further right means more hours played; higher up means more complete.
         </p>
         <ResponsiveContainer width="100%" height={280}>
           <ScatterChart margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>

@@ -104,8 +104,8 @@ export function Achievements({ data }: { data: SteamData }) {
       </div>
 
       <p className="legend">
-        <b>Impact</b> = points added to your average by unlocking one more achievement in that game.
-        Negative means starting a multi-achievement game one at a time would dip your average.
+        <b>Impact</b> is how much your overall average would move if you unlocked one more achievement in that game.
+        A negative value means it would dip your average for now.
       </p>
 
       <div className="grid-head grid-head--ach">

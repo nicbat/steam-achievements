@@ -40,10 +40,10 @@ export function GetStarted({ onBack }: { onBack: () => void }) {
       <button className="linkbtn guide__back" onClick={onBack}>
         &#8592; Back
       </button>
-      <h1 className="guide__title">Generate your steam_data.json</h1>
+      <h1 className="guide__title">Get your steam_data.json</h1>
       <p className="guide__lede">
-        The Steam API can&rsquo;t be called from a browser (no CORS), so a tiny script runs on your machine
-        instead. Your API key <b>never leaves your computer</b> — this page only helps you assemble the command.
+        Steam&rsquo;s API can&rsquo;t be called from a browser, so you run a small script on your own machine to
+        create the file. Your API key <b>stays on your computer</b> — this page just helps you build the command.
       </p>
 
       <ol className="steps">
@@ -52,12 +52,11 @@ export function GetStarted({ onBack }: { onBack: () => void }) {
           <div className="step-card__body">
             <h3>Get a Steam Web API key</h3>
             <p>
-              Register one (free, instant) — for the domain field just enter anything, e.g. <code>localhost</code>.
+              It&rsquo;s free and instant. In the domain field, type anything — <code>localhost</code> works.
             </p>
             <p className="step-card__note">
-              <b>Sign in to Steam first.</b> The key page looks blank or “dead” if you&rsquo;re not logged in — it
-              silently redirects to the login screen. Log in in the same browser, then open the link. Your account
-              also needs to be Steam-Guard-enabled and have spent at least $5 (Valve&rsquo;s requirement for API keys).
+              <b>Sign in to Steam first</b>, or the key page shows up blank (it redirects to login). Your account also
+              needs Steam Guard on and at least $5 spent — Valve requires this for API keys.
             </p>
             <div className="btnrow">
               <a className="btn" href="https://store.steampowered.com/login/" target="_blank" rel="noreferrer">
@@ -67,10 +66,6 @@ export function GetStarted({ onBack }: { onBack: () => void }) {
                 2. Open key page &#8599;
               </a>
             </div>
-            <p className="step-card__note">
-              If it still won&rsquo;t load, try <code>steamcommunity.com/dev/apikey</code> directly, or the dev landing
-              page <code>steamcommunity.com/dev</code>.
-            </p>
             <input
               className="field"
               type="text"
@@ -85,12 +80,11 @@ export function GetStarted({ onBack }: { onBack: () => void }) {
         <li className="step-card">
           <div className="step-card__n">2</div>
           <div className="step-card__body">
-            <h3>Download the collector &amp; run it</h3>
+            <h3>Download the collector and run it</h3>
             <p>
-              Needs only <b>Python 3</b> — no <code>pip install</code>, no dependencies (macOS &amp; most Linux
-              already have it; Windows: install from python.org or the Microsoft Store). Paste your{" "}
-              <b>profile link</b> (or a SteamID64 / vanity name) — the command below fills in automatically with
-              your key, so there&rsquo;s no file to create.
+              Needs <b>Python 3</b> only — no <code>pip install</code>. (macOS and most Linux have it already; on
+              Windows, get it from python.org or the Microsoft Store.) Paste your <b>profile link</b> — or a
+              SteamID64 or vanity name — and the command below updates automatically.
             </p>
             <input
               className="field"
@@ -115,7 +109,7 @@ export function GetStarted({ onBack }: { onBack: () => void }) {
               <code>{command}</code>
             </pre>
             <p className="step-card__note">
-              Runs in a few seconds (~10–15s even for a large library) and writes steam_data.json next to the script.
+              Takes a few seconds (~10–15s for a large library) and saves steam_data.json next to the script.
             </p>
           </div>
         </li>
@@ -123,8 +117,8 @@ export function GetStarted({ onBack }: { onBack: () => void }) {
         <li className="step-card">
           <div className="step-card__n">3</div>
           <div className="step-card__body">
-            <h3>Upload the file here</h3>
-            <p>Come back, hit “Back”, and drop in the generated steam_data.json. It&rsquo;s parsed entirely in your browser.</p>
+            <h3>Upload it here</h3>
+            <p>Go back and drop in your steam_data.json. It&rsquo;s read entirely in your browser — nothing is uploaded.</p>
             <button className="btn btn--accent" onClick={onBack}>
               Back to upload
             </button>

@@ -28,21 +28,21 @@ export function HowItWorks({ data }: { data: SteamData }) {
       </div>
 
       <div className="how__card">
-        <h3 className="how__h">The method Steam uses</h3>
+        <h3 className="how__h">Steam&rsquo;s method, in three steps</h3>
         <ol className="how__steps">
           <li>
-            <b>Count only games you&rsquo;ve started.</b> A game joins the average once you&rsquo;ve unlocked{" "}
-            <b>at least one</b> achievement in it. Owned-but-untouched games are ignored — right now{" "}
-            <b>{avg.countedGames.toLocaleString()}</b> of your games count.
+            <b>Only games you&rsquo;ve started count.</b> A game enters the average once you unlock at least one
+            achievement in it. Games you own but never played are ignored — <b>{avg.countedGames.toLocaleString()}</b>{" "}
+            of yours count right now.
           </li>
           <li>
-            <b>Floor each game&rsquo;s percentage.</b> A game at {sample[0] ? `${sample[0].u}/${sample[0].t}` : "7/9"} is{" "}
-            {sample[0] ? sample[0].raw.toFixed(2) : "77.78"}% — Steam drops the decimals to{" "}
-            <b>{sample[0] ? sample[0].floored : 77}%</b>. Always rounds <i>down</i>.
+            <b>Each game&rsquo;s percentage is rounded down.</b> A game at{" "}
+            {sample[0] ? `${sample[0].u}/${sample[0].t}` : "7/9"} is {sample[0] ? sample[0].raw.toFixed(2) : "77.78"}%,
+            which Steam counts as <b>{sample[0] ? sample[0].floored : 77}%</b> — decimals are always dropped.
           </li>
           <li>
-            <b>Average those floored numbers</b>, then <b>floor again</b> for the badge. Your exact mean is{" "}
-            <b><MeanValue value={avg.mean} /></b>, which Steam displays as <b>{avg.displayed}%</b>.
+            <b>Those rounded percentages are averaged</b>, then rounded down again for the badge. Your exact average
+            is <b><MeanValue value={avg.mean} /></b>, shown by Steam as <b>{avg.displayed}%</b>.
           </li>
         </ol>
       </div>
@@ -77,36 +77,36 @@ export function HowItWorks({ data }: { data: SteamData }) {
             </tbody>
           </table>
           <p className="how__note">
-            Each game contributes its <b>floored</b> value — the raw percentage&rsquo;s decimals never reach the
-            average. That&rsquo;s why the number you see can sit a point below the &ldquo;real&rdquo; math.
+            Each game contributes its rounded-down value, so the decimals never reach the average. That&rsquo;s why
+            your badge can sit a point below the exact math.
           </p>
         </div>
       )}
 
       <div className="how__card how__card--warn">
-        <h3 className="how__h">Things that surprise people ⚠️</h3>
+        <h3 className="how__h">Good to know</h3>
         <ul className="how__warn">
           <li>
-            <b>Starting a new game lowers your average.</b> It enters the pool at a low percentage and drags the mean
-            down. It&rsquo;s temporary — finishing it pulls you back up — but the dip is real. (See it happen on the
-            &ldquo;average over time&rdquo; chart in Overview.)
+            <b>Starting a new game lowers your average.</b> It joins at a low percentage and pulls the number down.
+            Finishing it brings you back up, but the dip is real. (Watch it on the &ldquo;average over time&rdquo;
+            chart in Overview.)
           </li>
           <li>
-            <b>One unlock may not move the number at all.</b> Unlocking 1 of 80 achievements is +1.25% raw — but once
-            floored and averaged across {avg.countedGames.toLocaleString()} games it can round to no visible change.
+            <b>One unlock might not move the number.</b> Unlocking 1 of 80 achievements is only +1.25% for that game,
+            and averaged across {avg.countedGames.toLocaleString()} games it can round to no visible change.
           </li>
           <li>
-            <b>Achievement count doesn&rsquo;t matter, only the percentage.</b> A 100% game with 5 achievements is worth
-            exactly as much to your average as a 100% game with 500.
+            <b>Only the percentage matters, not the count.</b> A 100% game with 5 achievements counts the same as a
+            100% game with 500.
           </li>
           <li>
-            <b>Perfect games are pure ballast.</b> You currently have <b>{avg.perfectGames}</b> game
-            {avg.perfectGames === 1 ? "" : "s"} at 100% — each one is a full 100 pulling your mean up.
+            <b>Perfect games only help.</b> You have <b>{avg.perfectGames}</b> game
+            {avg.perfectGames === 1 ? "" : "s"} at 100% — each adds a full 100 to the average.
           </li>
           <li>
-            <b>Finishing a nearly-done game beats scattering unlocks.</b> Taking a game from 96% to 100% adds a clean +4
-            to that game&rsquo;s contribution; one achievement each across four fresh games can even go negative. The
-            Optimizer ranks moves by exactly this.
+            <b>Finishing a nearly-done game beats spreading unlocks around.</b> Going 96% → 100% adds a clean +4 to
+            that game; one unlock each across four fresh games can even lower your average. The Optimizer ranks moves
+            by this.
           </li>
         </ul>
       </div>

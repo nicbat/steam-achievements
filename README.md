@@ -73,6 +73,8 @@ was ported from.
     components/          Nav, Upload, ProfileOverview, Dashboard, PlanDrawer, PlanPill, AddButton
     views/              Achievements, Library, Optimizer, HowItWorks, Trends, GetStarted
     assets/collector.py bundled copy of collector/steam_collect.py (offered as download)
+public/
+  demo.json           committed sample export — powers the landing-page "live demo"
 collector/              Local data collector + analysis CLI
   steam_collect.py      collector → steam_data.json (stdlib only)
   analyze.py            avg + optimizer CLI (source the web Optimizer was ported from)

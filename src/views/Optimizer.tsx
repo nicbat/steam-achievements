@@ -168,7 +168,7 @@ export function Optimizer({ data }: { data: SteamData }) {
       {/* 1. Almost-perfect — check-all, expands to show the last achievements */}
       <div className="ogroup">
         <h3 className="ogroup__title">Finish almost-perfect games</h3>
-        <p className="ogroup__sub">1–3 from 100%. The remaining achievements are listed with their global % — watch for a rare one.</p>
+        <p className="ogroup__sub">Games 1–3 achievements short of 100%. Each one&rsquo;s remaining achievements are listed with how many players have them — watch for a rare one.</p>
         <div className="ogroup__list">
           {opt.nearPerfect.map((s) => {
             const g = gameById.get(s.appid)!;
@@ -221,7 +221,7 @@ export function Optimizer({ data }: { data: SteamData }) {
       {/* 2. Best single unlocks in started games */}
       <div className="ogroup">
         <h3 className="ogroup__title">Best single unlocks (started games)</h3>
-        <p className="ogroup__sub">One more achievement in a game you've already started. Fewer-achievement games pay more.</p>
+        <p className="ogroup__sub">One more achievement in a game you&rsquo;ve already started. Games with fewer achievements move your average the most.</p>
         <div className="ogroup__list">
           {opt.started.slice(0, 18).map((s) => {
             const item = achievementItem(gameById.get(s.appid)!, s.easiestApi, s.easiestName);
@@ -250,9 +250,9 @@ export function Optimizer({ data }: { data: SteamData }) {
       <div className="ogroup">
         <h3 className="ogroup__title">Games worth starting</h3>
         <p className="ogroup__sub">
-          Starting a game only helps if you can clear a bigger slice of it than your average. Set how easy an
-          achievement counts as reachable (<b>N</b>) and the completion you want to hit (<b>X</b>) — these games clear
-          it. &ldquo;Plan easy set&rdquo; adds just the achievements above the floor.
+          Starting a game only helps if you&rsquo;ll finish more of it than your current average. Choose how easy an
+          achievement has to be to count as reachable (<b>N</b>) and the completion you&rsquo;re aiming for (<b>X</b>);
+          these games can get there. &ldquo;Plan easy set&rdquo; adds just the achievements above your N threshold.
         </p>
 
         <div className="wsf__sliders">
@@ -339,7 +339,7 @@ export function Optimizer({ data }: { data: SteamData }) {
       <div className="ogroup">
         <h3 className="ogroup__title">Easy wins you skipped</h3>
         <p className="ogroup__sub">
-          Locked achievements most other players already have — low-effort unlocks sitting in your library. Global % shown; impact is per-achievement.
+          Locked achievements that most other players already have — quick unlocks sitting in your library. The percentage is how many players have each.
         </p>
         <div className="ogroup__list">
           {easyWins.map((w) => {

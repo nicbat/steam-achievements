@@ -16,7 +16,15 @@ import { lazy, Suspense } from "react";
 
 const Trends = lazy(() => import("../views/Trends").then((m) => ({ default: m.Trends })));
 
-export function Dashboard({ data, onReset }: { data: SteamData; onReset: () => void }) {
+export function Dashboard({
+  data,
+  onReset,
+  demo = false,
+}: {
+  data: SteamData;
+  onReset: () => void;
+  demo?: boolean;
+}) {
   const plan = usePlan();
   const wide = useWide();
   const [view, setView] = useState<ViewKey>("overview");
@@ -38,9 +46,21 @@ export function Dashboard({ data, onReset }: { data: SteamData; onReset: () => v
         <div className="brand__spacer" />
         {!docked && <PlanPill count={plan.items.length} delta={delta} onClick={() => setOpen(true)} />}
         <button className="brand__reset" onClick={onReset}>
-          Replace data
+          {demo ? "Use my own data" : "Replace data"}
         </button>
       </div>
+
+      {demo && (
+        <div className="demobar">
+          <span className="demobar__dot" aria-hidden="true">
+            &#9670;
+          </span>
+          <span>
+            You&rsquo;re viewing sample data from <i>my</i> Steam account. Load your own with{" "}
+            <b>Use my own data</b>.
+          </span>
+        </div>
+      )}
 
       <Nav active={view} onChange={setView} />
       {view === "overview" && (

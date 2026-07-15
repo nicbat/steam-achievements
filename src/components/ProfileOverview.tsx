@@ -79,16 +79,16 @@ export function ProfileOverview({ data }: Props) {
       </div>
 
       <p className="overview__note">
-        Average uses Steam&rsquo;s method: each game&rsquo;s completion is floored before averaging, and Steam shows
-        only the whole number (<b>{avg.displayed}%</b>). The dimmed decimals above are the exact mean — real, but
-        not counted by Steam. Snapshot from {new Date(data.collected_at).toLocaleString()}.
+        Average completion uses Steam&rsquo;s method — each game rounded down, then averaged — which Steam shows as a
+        whole number (<b>{avg.displayed}%</b>). The dimmed decimals above are the exact figure. Data collected{" "}
+        {new Date(data.collected_at).toLocaleString()}.
       </p>
 
       {rarest.length > 0 && (
         <div className="rarest">
           <div className="rarest__head">
             <h3 className="rarest__title">Your rarest unlocks</h3>
-            <span className="rarest__sub">Achievements you own that almost no one else has</span>
+            <span className="rarest__sub">Achievements you&rsquo;ve earned that few other players have</span>
           </div>
           <ul className="rarest__list">
             {rarest.map((a) => (
