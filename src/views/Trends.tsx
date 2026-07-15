@@ -228,7 +228,7 @@ export function Trends({ data }: { data: SteamData }) {
 
       <div className="chart-card">
         <h3 className="chart-card__title">Unlock cadence</h3>
-        <p className="chart-card__sub">When you binge and when you go quiet — unlocks per month, darker = more.</p>
+        <p className="chart-card__sub">When you binge and when you go quiet — unlocks per month, lighter = more.</p>
         <div className="heat">
           {heatmap.years.map((y) => (
             <div className="heat__row" key={y}>
