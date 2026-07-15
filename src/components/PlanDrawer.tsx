@@ -59,6 +59,7 @@ export function PlanDrawer({ data, base, proj, docked, pinned, wide, onClose, on
 
   return (
     <aside className={`plandrawer${docked ? " plandrawer--docked" : " plandrawer--float"}`} aria-label="Your plan">
+      <div className="plandrawer__grip" aria-hidden="true" />
       <div className="plandrawer__h">
         <div className="plandrawer__title">Your plan</div>
         <div className="plandrawer__hactions">

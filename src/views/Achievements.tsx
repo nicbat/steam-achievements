@@ -1,9 +1,10 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { SteamData } from "../types";
 import { flattenAchievements } from "../lib/derive";
 import { computeImpactByApp } from "../lib/plan";
 import { formatDate, pctRate, signed2, signed5 } from "../lib/format";
+import { useIsNarrow } from "../lib/hooks";
 import { usePlan } from "../context/PlanContext";
 import { AddButton } from "../components/AddButton";
 import { AchIcon } from "../components/AchIcon";
@@ -56,22 +57,32 @@ export function Achievements({ data }: { data: SteamData }) {
     });
   }, [all, query, filter, sortKey, sortDir, impactByApp]);
 
+  const defaultDir = (key: SortKey): "asc" | "desc" => (key === "name" || key === "game" ? "asc" : "desc");
   function toggleSort(key: SortKey) {
     if (key === sortKey) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else {
       setSortKey(key);
-      setSortDir(key === "name" || key === "game" ? "asc" : "desc");
+      setSortDir(defaultDir(key));
     }
+  }
+  function pickSort(key: SortKey) {
+    setSortKey(key);
+    setSortDir(defaultDir(key));
   }
   const arrow = (key: SortKey) => (sortKey === key ? (sortDir === "asc" ? " ▲" : " ▼") : "");
 
+  // On phone widths rows restack into taller cards (see .grid-row--ach in styles.css),
+  // so the virtualizer needs a matching row-height estimate.
+  const narrow = useIsNarrow();
+  const rowH = narrow ? 76 : 56;
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 56,
+    estimateSize: () => rowH,
     overscan: 12,
   });
+  useEffect(() => virtualizer.measure(), [rowH, virtualizer]);
 
   return (
     <section className="view">
@@ -107,6 +118,28 @@ export function Achievements({ data }: { data: SteamData }) {
         <b>Impact</b> is how much your overall average would move if you unlocked one more achievement in that game.
         A negative value means it would dip your average for now.
       </p>
+
+      <div className="sortbar">
+        <span className="sortbar__label">Sort</span>
+        <select
+          className="sortbar__select"
+          value={sortKey}
+          onChange={(e) => pickSort(e.target.value as SortKey)}
+          aria-label="Sort achievements by"
+        >
+          <option value="rarity">Global rarity</option>
+          <option value="impact">Impact</option>
+          <option value="name">Achievement</option>
+          <option value="game">Game</option>
+        </select>
+        <button
+          className="sortbar__dir"
+          onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
+          aria-label={sortDir === "asc" ? "Ascending, tap to reverse" : "Descending, tap to reverse"}
+        >
+          {sortDir === "asc" ? "▲" : "▼"}
+        </button>
+      </div>
 
       <div className="grid-head grid-head--ach">
         <span className="colh" />

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { SteamData } from "../types";
 import { averageCompletion } from "../lib/steam";
 import { projectAverage } from "../lib/plan";
+import { signed2 } from "../lib/format";
 import { useWide, usePersistedBool } from "../lib/hooks";
 import { usePlan } from "../context/PlanContext";
 import { Nav, type ViewKey } from "./Nav";
@@ -75,6 +76,18 @@ export function Dashboard({
       {view === "library" && <Library data={data} />}
       {view === "optimizer" && <Optimizer data={data} />}
       {view === "howitworks" && <HowItWorks data={data} />}
+
+      {/* Phone-only sticky trigger — the header pill scrolls away, this doesn't.
+          Hidden above 560px via CSS; only shown when there's a plan to return to. */}
+      {plan.items.length > 0 && !open && !docked && (
+        <button className="planfab" onClick={() => setOpen(true)} aria-label="Open your plan">
+          <span className="planfab__mark" aria-hidden="true">
+            &#9670;
+          </span>
+          <span>Plan &middot; {plan.items.length}</span>
+          {delta !== 0 && <span className="planfab__d">{signed2(delta)}</span>}
+        </button>
+      )}
 
       {open && !docked && <div className="scrim" onClick={() => setOpen(false)} />}
       {(docked || open) && (

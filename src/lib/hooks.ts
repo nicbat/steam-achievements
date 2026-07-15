@@ -2,16 +2,27 @@ import { useEffect, useState } from "react";
 
 /** True when the viewport is at least `min` px wide (for docking the plan). */
 export function useWide(min = 1100): boolean {
-  const [wide, setWide] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(`(min-width:${min}px)`).matches,
+  return useMediaQuery(`(min-width:${min}px)`);
+}
+
+/** True on phone-width viewports, where tables restack into cards (see styles.css). */
+export function useIsNarrow(max = 560): boolean {
+  return useMediaQuery(`(max-width:${max}px)`);
+}
+
+/** Subscribe to a media query, SSR-safe. */
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(
+    () => typeof window !== "undefined" && window.matchMedia(query).matches,
   );
   useEffect(() => {
-    const mq = window.matchMedia(`(min-width:${min}px)`);
-    const fn = () => setWide(mq.matches);
+    const mq = window.matchMedia(query);
+    const fn = () => setMatches(mq.matches);
+    fn();
     mq.addEventListener("change", fn);
     return () => mq.removeEventListener("change", fn);
-  }, [min]);
-  return wide;
+  }, [query]);
+  return matches;
 }
 
 export function usePersistedBool(key: string, def: boolean): [boolean, (v: boolean) => void] {
