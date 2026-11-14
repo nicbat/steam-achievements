@@ -222,24 +222,13 @@ button svg {
   gap: 5px;
   border-right: 1px solid var(--border);
 }
+/* Navigation uses shared Button variants; only layout belongs here. */
 .sidebar button {
-  display: flex;
-  align-items: center;
+  justify-content: flex-start;
   gap: 11px;
   text-align: left;
-  border: 0;
-  color: var(--muted-foreground);
   padding: 11px 14px;
-  border-radius: 7px;
-  background: transparent;
   font-size: 14px;
-}
-.sidebar button.active {
-  background: var(--accent);
-  color: var(--foreground);
-}
-.sidebar button:hover {
-  background: var(--secondary);
 }
 .sidebar small {
   margin-top: 28px;
