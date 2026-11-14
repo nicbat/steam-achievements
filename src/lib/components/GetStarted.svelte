@@ -4,10 +4,12 @@
   import { Input } from "#lib/components/ui/input/index.js";
   import collector from "../../assets/collector.py?raw";
   import { Button } from "#lib/components/ui/button/index.js";
-  let { onBack }: { onBack: () => void } = $props();
+  let { onBack, onFile }: { onBack: () => void; onFile: () => void } = $props();
   let key = $state(""),
     profile = $state(""),
-    copied = $state(false);
+    copied = $state(false),
+    copyError = $state("");
+  function resetCopy() { copied = false; copyError = ""; }
   const ident = $derived.by(() => {
     const s = profile.trim();
     const match = s.match(
@@ -36,18 +38,20 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   async function copy() {
+    resetCopy();
     try {
       await navigator.clipboard.writeText(command);
       copied = true;
     } catch {
       copied = false;
+      copyError = "Could not copy. Select the command below and copy it manually.";
     }
   }
 </script>
 
 <div class="guide">
   <Button variant="ghost" onclick={onBack}>Back</Button>
-  <h1>Import your Steam data</h1>
+  <h2>Import your Steam data</h2>
   <p>Run the collector, then open the JSON file here. Python 3 required.</p>
   <Card.Root layout="padded">
     <h2>1. Get an API key</h2>
@@ -63,6 +67,7 @@
         type="password"
         autocomplete="off"
         bind:value={key}
+        oninput={resetCopy}
         placeholder="Steam Web API key"
       /></Label
     >
@@ -72,6 +77,7 @@
     <Label
       >Steam profile<Input
         bind:value={profile}
+        oninput={resetCopy}
         placeholder="Profile link or SteamID"
       /></Label
     >
@@ -82,6 +88,7 @@
         onclick={copy}>{copied ? "Copied" : "Copy command"}</Button
       >
     </div>
+    {#if copyError}<p role="status">{copyError}</p>{/if}
     <pre>{command}</pre>
     <p>Run in the download folder. Large libraries may take several minutes.</p>
     <p>
@@ -91,7 +98,7 @@
   <Card.Root layout="padded">
     <h2>3. Open the file</h2>
     <p>Choose steam_data.json from the collector’s folder.</p>
-    <Button onclick={onBack}>Import JSON</Button>
+    <Button onclick={onFile}>Open data file</Button>
   </Card.Root>
   <p>
     Your key is sent only to Steam by the collector. This page does not send or

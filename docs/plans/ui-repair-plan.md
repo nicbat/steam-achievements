@@ -190,3 +190,33 @@ Initial visitors retain Check profile. Cooldowns and API limits are unchanged.
 `refresh-actions.mjs` failed on the old UI and passes on the repair, covering correct full/quick
 checkpoint modes, no batches before confirmation, required-profile validation and 320px reflow.
 The existing end-to-end file/plan/import/backup flow passes; Svelte check is clean.
+
+## Follow-up action audit
+
+The prior visual/flow pass was not an exhaustive interaction audit. Confirmed additional
+issues: collector Import JSON only returned to the prior screen; clipboard failure had no
+explanation; game-detail search/status leaked into the next game with no empty-result reset;
+Refresh library after completion reopened the old completion panel instead of the refresh form.
+
+Fixed collector file selection and clipboard feedback, per-game filter reset and Clear filters,
+and resetting only the completed import presentation when Refresh library is requested. Active
+or paused checkpoints remain intact. `action-audit.mjs` exercises these actions by their visible
+names, including the native file chooser and a completed import followed by the six-hour cooldown.
+
+Process findings: checkpoint 253793e spans 194 files, 15,598 insertions and 5,544 deletions;
+frontend migration, backend, persistence and workflows arrived together. The main page mixed
+many state transitions in 119 compressed lines (25 KB). Existing browser tests exercised chosen
+sequences; they did not define the expected effect of each prominent action. At audit time PR
+checks consisted of Vercel deployment/preview checks, not application tests. These facts explain
+risk in this repo; they are not evidence about the user's other repositories.
+
+Added a PR workflow for Svelte checks, application/collector tests, all mocked browser flows and
+production build. It needs no Steam key and leaves live imports disabled. This runs tests on PRs;
+it does not change branch protection or guarantee usability. Future button changes should assert
+what their visible label promises: navigation, dialog/file chooser, download, state change, or an
+explicit blocked/error explanation. Test from saved, sample, empty, completed and paused states
+as applicable, rather than assuming one successful route covers them all.
+
+Remaining scope: this targeted audit is not a proof that every control is correct. Optimizer
+threshold interactions, all export/import variants and actual-user comprehension still deserve
+focused acceptance sessions. Do not claim that passing totals establish feature completeness.

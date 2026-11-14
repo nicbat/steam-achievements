@@ -26,6 +26,7 @@
   let query = $state("");
   let status = $state("all");
   let page = $state(0);
+  $effect(() => { game?.appid; query = ""; status = "all"; });
   const pageSize = 50;
   const keys = $derived(new Set(items.map(itemKey)));
   const achievements = $derived(
@@ -154,7 +155,7 @@
                 >{planned ? "✓ Planned" : "Add to plan"}</Button
               >{/if}
           </article>
-        {:else}<p class="empty">No matching achievements.</p>{/each}
+        {:else}{#if query || status !== "all"}<div class="empty"><p>No matching achievements.</p><Button variant="outline" onclick={()=>{query="";status="all";}}>Clear filters</Button></div>{:else}<p class="empty">No achievement details are available for this game.</p>{/if}{/each}
       </div>
       {#if achievements.length > pageSize}
         <nav class="pagination" aria-label="Achievement pages">
