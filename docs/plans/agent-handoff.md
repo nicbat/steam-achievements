@@ -3,7 +3,8 @@
 **2026-11-14 UI audit update:** Work is now committed on `ui/consistency-audit`.
 The inherited migration is checkpoint commit `253793e`. See
 [UI repair plan](ui-repair-plan.md) for reproduced issues, the first navigation fix,
-and remaining work. Older statements below about uncommitted work are historical.
+and implementation/verification details. The repair now covers shared styles, mobile
+navigation/rows, retained filters, plan presentations and import scrolling. Older statements below about uncommitted work are historical.
 
 Start here, then read `docs/plans/migration-verification.md` for implementation
 history and evidence. Later sections supersede earlier serial-import decisions.

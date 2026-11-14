@@ -2,7 +2,9 @@
 
 2026-11-14. The visual contract for all upcoming frontend work, including existing screens.
 Companion: [frontend plan](frontend-plan.md), [screen drafts](frontend-preview.html).
-This is the agreed design direction; the existing Svelte styles have not yet been migrated.
+This is the shared design direction. The UI repair pass now implements the core contracts;
+see [repair implementation and verification](ui-repair-plan.md). Drift/adoption findings
+below describe the pre-migration baseline, not the current installed component set.
 
 ## One system, not one design per screen
 
@@ -159,8 +161,8 @@ frontend plan; this guide itself is not a conformance claim.
 
 ## shadcn-svelte adoption gate
 
-Only Button is currently installed under `src/lib/components/ui/`; the site is **not yet**
-using shadcn-svelte throughout. The [adoption audit](shadcn-svelte-audit.md) records the
+At the original audit, only Button was installed under `src/lib/components/ui/`.
+The migration has since installed and adopted the shared primitives. The [adoption audit](shadcn-svelte-audit.md) records the
 remaining migration. Installing a component or matching its colors does not prove adoption.
 
 For each existing or new screen, use the appropriate shared shadcn-svelte primitives for
@@ -179,3 +181,15 @@ legacy controls are migration debt, not permanent exceptions. Static HTML protot
 illustrate layouts. Future executable screen drafts should use the actual Svelte components.
 
 Component selection follows the [official component catalog](https://www.shadcn-svelte.com/docs/components).
+
+
+## Current implementation ownership
+
+- Element defaults live in `@layer base`; component utilities may override them.
+- Card's `layout="structured"` uses Header/Content padding; `layout="padded"` is for
+  direct children. Both share 24px desktop / 16px narrow padding. Do not restore `.panel`.
+- Mobile navigation uses the labeled native selector; desktop uses shared Button variants.
+- Responsive data rows use `.responsive-data` and cell `data-label` attributes, preserving
+  one table/action tree. Screens own domain layout, not duplicate controls.
+- Domain selectors must be specific to their component; do not reintroduce global names
+  such as `.projection` shared between Overview and Plan.

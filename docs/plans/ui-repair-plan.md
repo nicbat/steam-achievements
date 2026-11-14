@@ -74,37 +74,37 @@ with the actual nine destinations. Do not silently hide destinations.
 ### 1. Shared shell and primitive ownership
 
 - [x] Fix off-hover selection and navigation alignment; add a focused regression.
-- [ ] Inventory consumed legacy selectors; remove unused rules and consolidate repeated
+- [x] Inventory consumed legacy selectors; remove unused rules and consolidate repeated
   breakpoints without blind replacement.
-- [ ] Let shared variants own control states. Standardize panel padding/header treatment
+- [x] Let shared variants own control states. Standardize panel padding/header treatment
   and remove duplicate Card/`.panel` styling one consumer at a time.
-- [ ] Resolve sidebar width/wrapping and global versus page-specific actions.
-- [ ] Verify all navigation destinations, keyboard focus, long labels, and 320px reflow.
+- [x] Resolve sidebar width/wrapping and global versus page-specific actions.
+- [x] Verify all navigation destinations, keyboard focus, long labels, and 320px reflow.
 
 ### 2. Navigation continuity and mobile library
 
-- [ ] Lift search, filter, sort and page state to an application-owned view-state model.
+- [x] Lift search, filter, sort and page state to an application-owned view-state model.
   Define reset on dataset/profile replacement; preserve state on ordinary navigation.
-- [ ] Use stacked game rows on narrow screens with name, unlocked/total, completion,
+- [x] Use stacked game rows on narrow screens with name, unlocked/total, completion,
   freshness and detail/plan action visible together. Retain desktop comparison tables.
-- [ ] Apply the same responsive decision to Achievements; add Clear filters to empty results.
-- [ ] Verify search -> game -> plan -> library retains context; check paging and keyboard access.
+- [x] Apply the same responsive decision to Achievements; add Clear filters to empty results.
+- [x] Verify search -> game -> plan -> library retains context; check paging and keyboard access.
 
 ### 3. Calm import and stable assets
 
-- [ ] Record a mocked delayed multi-batch import with mixed normal no-achievement outcomes,
+- [x] Record a mocked delayed multi-batch import with mixed normal no-achievement outcomes,
   pause/resume and manually scrolled list. Separate deliberate following from unexpected jumps.
-- [ ] Reserve action/status footprints across running, pausing, saving and paused states.
-- [ ] Limit transitions to intended properties; respect reduced motion.
-- [ ] Keep artwork footprints stable on load/failure using accessible fallbacks.
-- [ ] Re-run import recovery tests; preserve accounting, explicit resume and storage semantics.
+- [x] Reserve action/status footprints across running, pausing, saving and paused states.
+- [x] Limit transitions to intended properties; respect reduced motion.
+- [x] Keep artwork footprints stable on load/failure using accessible fallbacks.
+- [x] Re-run import recovery tests; preserve accounting, explicit resume and storage semantics.
 
 ### 4. Consistent domain screens
 
-- [ ] Review Overview, Plan, Optimizer, Trends, Data and help side by side using the repaired
+- [x] Review Overview, Plan, Optimizer, Trends, Data and help side by side using the repaired
   shell. Unify headings, section spacing, action hierarchy and empty states.
-- [ ] Review plan as page, sheet and docked panel; avoid conflicting nested headings/actions.
-- [ ] Test long names, unknown dates, no achievements, large libraries and populated plans.
+- [x] Review plan as page, sheet and docked panel; avoid conflicting nested headings/actions.
+- [x] Test long names, unknown dates, no achievements, large libraries and populated plans.
 
 ## Acceptance and current limits
 
@@ -115,8 +115,9 @@ browser suite before calling the UI repair complete. Use controlled imports for 
 
 This audit does not prove accessibility conformance, public import safety, smooth live-network
 performance or usability with actual users. The backend deployment gates in the handoff remain.
-The first slice intentionally fixes one confirmed shared-style defect; the unchecked work
-above is still pending. Keep the PR draft rather than imply the entire UI has been repaired.
+The four implementation slices above are now implemented and browser-checked. Keep the PR
+draft for review of the inherited migration and the repaired interface; actual-user and
+live-network validation remain separate from these controlled checks.
 
 Local visual evidence from this pass is in `/tmp/atlas-ui-audit/` (not tracked or portable).
 Reproduce the navigation regression with a local dev server and
@@ -127,3 +128,52 @@ Validation for the first fix: `npm run check` reports 0 errors / 0 warnings;
 widths; `node tests/browser/flows.mjs` passes file preview, plan persistence,
 backup/restore, mocked import and mobile backup checks with no browser errors.
 No production build or complete browser-suite run was performed for this scoped CSS fix.
+
+
+## Repair implementation follow-up
+
+- Base element resets now live in the CSS base layer, so component typography and spacing
+  utilities work. Removed unused landing/upload/overlay rules and consolidated narrow
+  breakpoints. Shared Card owns direct-content padding via `layout="padded"`; migrated
+  Library, Achievements, Plan, Optimizer, Trends and collector instructions. Overview
+  metrics and plan projections use that contract too.
+- Desktop rail widened to 224px. Mobile uses a labeled native destination selector with
+  every available screen. Sample/profile switching lives in the header. Data & backups
+  stays in navigation; the header shortcut remains for first visit. The plan button opens
+  the sheet or the full plan when already docked. Selected navigation changes immediately.
+- Library and Achievement search/filter/sort/page state belongs to the application page.
+  Normal navigation and game dialogs retain it; changing profile or sample mode, and
+  explicitly replacing a file/backup, resets it. Same-profile refresh retains context and
+  clamps displayed pages to available results. State is session-only, not persisted on reload.
+- Mobile Library/Achievements reuse the same semantic table records and actions, displayed
+  as stacked labeled rows below 700px. No duplicate rendering or second data model. Empty
+  results provide Clear filters. Filter groups now use spaced-item semantics so each chip
+  retains its complete border.
+- Overview and Plan no longer share a global `.projection` selector. Plan has one primary
+  heading per presentation and no ineffective close button on its page; pinned plan does
+  not duplicate the full plan page. Empty plans link to Find achievements.
+- Shared artwork keeps its dimensions on failure and shows an icon fallback. Button
+  transitions affect colors only; progress transitions affect transform only. Reduced motion
+  is respected. The keyboard skip link is a fixed overlay, avoiding focus-induced layout shifts.
+- Import following only scrolls when the active group exits the viewport. Wheel, touch,
+  keyboard and pointer interaction stop following; Show current games restores it explicitly.
+  The monitor header and primary pause/resume footprint stay stable. First-time completion
+  stays on the import summary instead of implicitly switching to Overview.
+
+Regression coverage added: `ui-continuity.mjs` (search/sort/page continuity, game/plan round
+trip, file/profile reset, long title/unknown date, mobile row geometry, failed-artwork geometry,
+keyboard skip and reduced motion, plan page/sheet/dock) and `import-motion.mjs` (recorded
+24-game mixed-result import, pause button geometry, manual scroll retention and explicit follow).
+The existing recovery test intentionally logs one mocked HTTP 429; that expected response is
+not a new console exception. All Steam requests in these checks are intercepted.
+
+Final verification: 98 application tests pass; the complete browser suite passes, including
+both new regressions. The final keyboard/long-title/plan-deduplication refinements passed
+another targeted continuity run. Final Svelte check reports 0 errors / 0 warnings, and
+`npm run build` succeeds with Vercel adapter output. Local development was stopped for the
+build and restarted afterward. No deployment or real Steam calls were made.
+
+Review artifacts (local, not committed):
+- `/tmp/atlas-ui-repaired/`: desktop, 390px and 320px snapshots of seven screens.
+- `/tmp/atlas-browser-tests/1794692459081-repaired-library-320.png`: mobile Library.
+- `/tmp/atlas-browser-videos/page@2e9ab95398ac3d977527a6d47bb84741.webm`: controlled import walkthrough.

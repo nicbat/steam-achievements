@@ -22,7 +22,12 @@
  async function follow(){
   following=true;await tick();
   const index=cp?.selected.indexOf(firstActive??-1)??-1;
-  if(index>=0&&viewport){const lastFullRow=Math.floor(Math.max(0,viewport.scrollHeight-viewport.clientHeight)/64)*64;viewport.scrollTop=Math.min(index*64,lastFullRow);}
+  if(index>=0&&viewport){
+   const top=index*64,bottom=(index+Math.max(1,active.size))*64;
+   // Keep the list still while the current group remains fully visible.
+   if(top<viewport.scrollTop)viewport.scrollTop=top;
+   else if(bottom>viewport.scrollTop+viewport.clientHeight)viewport.scrollTop=bottom-viewport.clientHeight;
+  }
  }
  $effect(()=>{if(firstActive&&following)void follow();});
  function status(id:number){
@@ -37,13 +42,13 @@
 </script>
 {#if cp?.selected.length}
  <section aria-label="Game progress" class="space-y-2">
-  <div class="flex min-h-9 items-center justify-between gap-2">
+  <div class="flex min-h-11 items-center justify-between gap-2">
    <h3 class="text-sm font-medium">Games</h3>
    {#if firstActive&&!following}<Button variant="ghost" size="sm" onclick={follow}>Show current games</Button>{:else}<span class="text-xs text-muted-foreground">{importState.stage==='running'?(active.size?`Checking ${active.size} games (${elapsed}s)`:importState.pauseRequested?'Finishing…':'Saving progress…'):importState.stage==='complete'?'Finished':'Saved progress'}</span>{/if}
   </div>
   <!-- Keyboard focus lets keyboard users scroll the game list. -->
   <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
-  <div bind:this={viewport} class="relative h-48 sm:h-60 overflow-y-auto rounded-lg border border-border bg-background/30 overscroll-contain" onwheel={()=>following=false} ontouchmove={()=>following=false} onkeydown={(event)=>{if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End'].includes(event.key))following=false}} onscroll={(event)=>scrollTop=event.currentTarget.scrollTop} tabindex="0" role="region" aria-label="Selected games">
+  <div bind:this={viewport} class="relative h-48 sm:h-60 overflow-y-auto rounded-lg border border-border bg-background/30 overscroll-contain" onpointerdown={()=>following=false} onwheel={()=>following=false} ontouchmove={()=>following=false} onkeydown={(event)=>{if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End'].includes(event.key))following=false}} onscroll={(event)=>scrollTop=event.currentTarget.scrollTop} tabindex="0" role="region" aria-label="Selected games">
    <ul class="divide-y divide-border">
     {#if start}<li aria-hidden="true" class="border-0!" style:height={`${start*64}px`}></li>{/if}
     {#each visible as id, index (id)}
