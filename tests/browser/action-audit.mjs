@@ -31,6 +31,13 @@ try{
  await p.getByRole('button',{name:'Refresh library',exact:true}).click();await p.getByRole('button',{name:'Full recheck',exact:true}).waitFor();
  assert.equal(starts,1);assert.equal(batches,1);
  await p.getByRole('button',{name:'Full recheck',exact:true}).click();await p.getByText(/Refresh is available after/).waitFor();assert.equal(starts,1);
+ await p.getByRole('button',{name:'Reset local refresh cooldown',exact:true}).click();
+ await p.getByText('Local refresh cooldown reset. Choose Quick refresh or Full recheck when ready.',{exact:true}).waitFor();
+ assert.equal(starts,1);assert.equal(batches,1);
+ await ui.shoot('local-cooldown-reset');
+ await p.getByRole('button',{name:'Full recheck',exact:true}).click();
+ await p.getByRole('button',{name:'Start import',exact:true}).waitFor();
+ assert.equal(starts,2);assert.equal(batches,1);
  assert.deepEqual(ui.errors,[]);
  console.log('Action audit passed: detail filter recovery/reset; collector clipboard failure and real file chooser; refresh after completion and visible cooldown without extra requests.');
 }finally{await ui.close()}

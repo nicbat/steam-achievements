@@ -21,6 +21,9 @@ The [UI repair record](ui-repair-plan.md) documents navigation selection, shared
 mobile records/navigation, retained filters, plan presentations, stable artwork and import
 scrolling. Follow-ups repair Full recheck/Quick refresh, collector file selection and
 clipboard feedback, game-detail filter reset/recovery, and Refresh library after completion.
+Local development also offers Reset local refresh cooldown for the saved profile when
+there is no unfinished checkpoint. This resets only the app timer, sends no requests,
+and is absent from production builds.
 
 Application commit `8fc5a6b` passed [Verify application run 43647145302](https://github.com/nicbat/steam-achievements/actions/runs/43647145302):
 Svelte check, 98 JavaScript tests, 12 Python tests, all mocked browser flows and production

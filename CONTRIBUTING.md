@@ -47,7 +47,11 @@ npm run test:browser
 
 Stop that server before `npm run build`: dev and build share generated SvelteKit output.
 Use `npm run dev:local` only when live-enabled local development is intended; it can
-load private credentials. Automated tests must intercept Steam calls and use isolated
+load private credentials. For repeated local import testing with a saved profile and no
+unfinished import, use **Reset local refresh cooldown** on Import / refresh. This
+development-only action clears that profile’s six-hour app timer without making requests
+or deleting data. It does not reset Steam retry deadlines or request accounting.
+Automated tests must intercept Steam calls and use isolated
 browser contexts. `tests/manual-live-smoke.mjs` is excluded from automated verification.
 
 Choose checks by risk:

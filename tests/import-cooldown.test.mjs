@@ -178,3 +178,32 @@ test("vanity profile without recent refresh still reaches review", async (t) => 
   assert.equal(h.store.current.checkpoint.retryAt, 0);
   assert.equal(h.requests.length, 1);
 });
+
+
+test("local cooldown reset preserves saved data and makes no requests", async (t) => {
+  const h = harness(t);
+  const c = h.controller();
+  const active = structuredClone(h.store.current.active);
+  h.store.current.refreshes.other = new Date(Date.now()).toISOString();
+  await c.check(h.data.steamid64);
+  await c.resetLocalRefreshCooldown();
+  assert.equal(h.requests.length, 0);
+  assert.deepEqual(h.store.current.active, active);
+  assert.ok(h.store.current.refreshes.other);
+  assert.equal(h.store.current.refreshes[h.data.steamid64], undefined);
+  assert.equal(c.view.stage, "idle");
+  await c.check(h.data.steamid64);
+  assert.equal(c.view.stage, "review");
+  assert.equal(h.requests.length, 1);
+});
+
+test("local reset refuses unfinished checkpoints and preserves their wait and accounting", async (t) => {
+  const h = harness(t);
+  const c = h.controller();
+  await c.check("https://steamcommunity.com/id/sample");
+  const before = structuredClone(h.store.current);
+  await c.resetLocalRefreshCooldown();
+  assert.deepEqual(h.store.current, before);
+  assert.equal(h.requests.length, 1);
+  assert.match(c.view.reason, /unfinished import/);
+});

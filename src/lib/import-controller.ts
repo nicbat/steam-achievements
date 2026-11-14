@@ -82,6 +82,27 @@ export class ImportController {
  }
  pause(reason='Import paused. Saved work can be resumed.'){this.stop=true;this.view.pauseRequested=true;if(this.view.stage==='review'){this.state('paused',reason);this.release();}else if(['running','checking'].includes(this.view.stage)){this.view.reason=`${reason} No more batches will start; the current request may finish.`;this.emit();}}
  invalidate(){this.stop=true;this.epoch++;this.abort?.abort();this.release();this.view={stage:'idle',reason:'',checkpoint:null,saving:false};this.emit();}
+ async resetLocalRefreshCooldown() {
+  if (this.active || this.view.saving || this.store.unsaved) return;
+  this.active = true;
+  try {
+   await this.lock();
+   // This action only clears the app's refresh timestamp. Never reset an
+   // unfinished import, Steam retry deadline, or API-call accounting.
+   if (this.store.current.checkpoint || this.view.checkpoint) {
+    throw Error('Finish or discard the unfinished import before resetting the local refresh cooldown.');
+   }
+   const sid = this.store.current.active?.steamid64;
+   if (!sid) throw Error('No saved profile has a refresh cooldown to reset.');
+   await this.store.update(data => { delete data.refreshes[sid]; });
+   this.state('idle', 'Local refresh cooldown reset. Choose Quick refresh or Full recheck when ready.');
+  } catch (error) {
+   this.state('paused', message(error));
+  } finally {
+   this.release();
+   this.active = false;
+  }
+ }
  async discard(){this.invalidate();await this.store.update(d=>{d.checkpoint=null;});}
  async allowMore(){if(this.view.stage!=='paused'||!this.view.checkpoint)return;this.view.checkpoint.allowance+=1000;try{await this.persist();await this.resume();}catch(e){this.state('paused',message(e));}}
  async retrySaving(){try{await this.store.retry();const saved=readCheckpoint(this.store.current.checkpoint);if(saved)this.view.checkpoint=saved;this.state('paused','Results saved. Choose Resume to continue.');}catch(e){this.state('paused',message(e));}}

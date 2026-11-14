@@ -96,6 +96,15 @@
     {#if guide}<GetStarted onBack={()=>guide=false} onFile={()=>fileInput.click()}/>
     {:else if view==='data'}<DataPanel dataset={effective} unsaved={!!unsaved} onexport={()=>exportBackup()} onrestore={()=>fileInput.click()} ondelete={()=>{if(pendingWrites||busy){error='Wait for the current save to finish before deleting.';}else confirmDelete=true;}} onretry={retrySaving} onexportunsaved={()=>exportBackup(true)}/>
     {:else if view==='import'||(!data&&view!=='about')}<ImportPanel state={importView} enabled={enabled&&!!session} profile={dataset.active?.steamid64??''} oncheck={check} onresume={()=>run(()=>controller?.resume())} onpause={()=>controller?.pause()} onskip={()=>run(()=>controller?.skipBlockedGame())} ondiscard={()=>run(()=>controller?.discard())} onallow={()=>run(()=>controller?.allowMore())} onretry={retrySaving} onexport={()=>exportBackup(true)} onfile={()=>fileInput.click()} ondemo={loadDemo} oncollector={()=>guide=true} onsaved={()=>navigate('overview')} onnew={()=>controller?.invalidate()} hasSaved={!!dataset.active} unsaved={!!unsaved}/>
+     {#if import.meta.env.DEV && dataset.active && !importView.checkpoint}
+      <div class="mt-5 space-y-2">
+       <Button variant="outline" disabled={busy || !!unsaved || !!pendingWrites}
+        onclick={() => run(() => controller?.resetLocalRefreshCooldown())}>
+        Reset local refresh cooldown
+       </Button>
+       <p class="text-sm text-muted-foreground">Local testing only. Keeps saved data and Steam rate limits intact.</p>
+      </div>
+     {/if}
     {:else if data&&view==='overview'}{#if !demo&&overdue}<p class="muted text-sm mb-4">{overdue} games need a fresh check.</p>{/if}<Overview {data} {items} onGame={id=>gameId=id}/>
     {:else if data&&view==='library'}<GameLibrary bind:query={libraryState.query} bind:filter={libraryState.filter} bind:sort={libraryState.sort} bind:ascending={libraryState.ascending} bind:page={libraryState.page} {data} {items} freshness={demo ? {} : effective.freshness[data.steamid64] ?? {}} onToggle={toggle} onGame={id=>gameId=id}/>
     {:else if data&&view==='achievements'}<AchievementExplorer bind:query={achievementState.query} bind:filter={achievementState.filter} bind:sort={achievementState.sort} bind:ascending={achievementState.ascending} bind:page={achievementState.page} {data} {items} onToggle={toggle} onGame={id=>gameId=id}/>
