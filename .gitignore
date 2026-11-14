@@ -10,3 +10,14 @@ collector/key.env
 key.env
 steam_data.json
 collector/steam_data.json
+
+# SvelteKit / Vercel
+.svelte-kit/
+.vercel/
+.env
+.env.*
+!.env.example
+
+# Python generated files
+__pycache__/
+*.pyc

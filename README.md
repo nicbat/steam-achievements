@@ -1,87 +1,111 @@
-# Steam Data — Achievement Atlas
+# Achievement Atlas
 
-A zero-backend React app that turns a Steam data export (`steam_data.json`, produced
-by `collector/steam_collect.py`) into an achievement dashboard and completion-rate
-optimizer. Everything runs client-side — your API key never touches this app, and the
-uploaded JSON never leaves the browser.
+A SvelteKit dashboard for Steam achievements, library stats, and completion plans.
+The interface uses shadcn-svelte primitives and a shared blue/gold theme. A minimal
+backend makes bounded Steam requests; your library, plans, preferences, and import
+checkpoints stay in your browser. No database, Cloudflare, account, or cloud sync.
 
-## Develop
+## Try it locally
 
-```bash
-npm install
-npm run dev      # http://localhost:5173
-```
-
-Generate `steam_data.json` with the collector (see `collector/`), then upload it in the
-app.
-
-## Build
+Requires Node 22.12+ (Vercel project targets Node 24).
 
 ```bash
-npm run build    # static output in dist/ — deploy to any static host ($0)
-npm run preview
+npm ci
+npm run dev:local
 ```
 
-## Collector
+Open **http://127.0.0.1:5188**. The local launcher reads `STEAM_API_KEY`,
+`STEAM_WEB_API_KEY`, `collector/key.env`, or `key.env`, without printing the key.
+It keeps a server-only signing secret in the ignored `.steam-import-secret.local`
+file so checkpoints survive local restarts, and binds to localhost. Keep that file private.
+Use `npm run dev` for demo/file-only mode without a key. Do not run multiple dev
+servers against the same checkout. Keep the same hostname and port to retain browser data.
 
-`collector/steam_collect.py` is a dependency-free (stdlib-only) script that calls the
-Steam Web API and writes `steam_data.json`. It needs only Python 3 — no `pip install`.
+Start with **Explore demo**, open a collector JSON file, or check a public Steam
+profile. Profile checking costs up to three Steam calls and shows a review before
+achievement import begins. New batches pause when the tab is hidden. Reloading never
+starts Steam calls automatically. A browser leave warning appears during requests or
+unsaved work; browsers may suppress that warning, so checkpoints are the recovery mechanism.
+
+**Data & backups** exports a versioned JSON backup of your library, all profile plans,
+preferences, and verification dates. Restore shows a replacement preview. Browser
+storage is not a permanent backup: retain downloaded copies. Existing IndexedDB and
+localStorage data migrate on the same origin. Demo changes are session-only.
+
+## Verification
 
 ```bash
-cd collector
-python3 steam_collect.py YOUR_STEAMID --key YOUR_API_KEY
+npm run check
+npm test
+python3 -m unittest discover -s collector -p 'test_*.py'
+npm run build
 ```
 
-The key is resolved as `--key` > `STEAM_WEB_API_KEY` env var > `collector/key.env`.
-`collector/analyze.py` is the original CLI average + optimizer that the web Optimizer
-was ported from.
+Stop the dev server before building. Browser regression tests use mocked Steam
+responses and consume **zero real Steam calls**. With a single dev server running at
+127.0.0.1:5188:
 
-## Status — all phases built
-
-- [x] **P1** Vite + React + TS scaffold, Steam-dark theme; drag-and-drop upload with
-      validation; localStorage persistence; profile overview + Steam-accurate average
-- [x] **P2** Achievement explorer (virtualized 9k-row table, search, filter chips,
-      sortable columns, descriptions, rarity bars) + Library view (sort by playtime /
-      completion / last played)
-- [x] **P3** Completion optimizer — port of `analyze.py` with a live what-if projection
-      you build by toggling suggested moves — plus rarity walls (rarest owned / easy missed)
-- [x] **P4** Get-started onboarding (key → download collector → run → upload, with
-      copy-to-clipboard command) + Trends charts (unlocks over time, completion
-      distribution, playtime-vs-completion scatter; lazy-loaded)
-
-- [x] **Plan** A shared, persisted plan you build from any screen: pinnable slide-over
-      drawer, plan-aware Impact column (recomputes live as you add moves), add-to-plan on
-      Achievements / Rarity / Library (drill into a game to pick individual achievements) /
-      Optimizer, Markdown checklist download + JSON export/re-import. Scatter tooltip fixed.
-
-## Repo layout
-
-```
-.                       Vite + React app (this is the main project)
-  index.html
-  package.json
-  vite.config.ts
-  src/
-    types.ts            JSON schema types (mirror steam_collect.py output)
-    lib/
-      steam.ts          flooredRate, averageCompletion (Steam's floor-per-game method)
-      optimizer.ts      optimize() suggestion lists
-      plan.ts           PlanItem, projection, computeImpactByApp, markdown/json, storage
-      hooks.ts          useWide, usePersistedBool, usePersistedNumber
-      derive.ts, format.ts
-    context/PlanContext shared plan store (localStorage, keyed by steamid)
-    components/          Nav, Upload, ProfileOverview, Dashboard, PlanDrawer, PlanPill, AddButton
-    views/              Achievements, Library, Optimizer, HowItWorks, Trends, GetStarted
-    assets/collector.py bundled copy of collector/steam_collect.py (offered as download)
-public/
-  demo.json           committed sample export — powers the landing-page "live demo"
-collector/              Local data collector + analysis CLI
-  steam_collect.py      collector → steam_data.json (stdlib only)
-  analyze.py            avg + optimizer CLI (source the web Optimizer was ported from)
-  key.env               optional API-key fallback (gitignored)
-docs/                   Original planning docs / mockups (plan.html, mockups.html, …)
-steam_data.json         sample export (gitignored)
+```bash
+npx playwright install chromium
+npm run test:browser
 ```
 
-The bundled `src/assets/collector.py` is a copy of `collector/steam_collect.py` — re-copy
-it if the collector changes. See `docs/plan.html` for the original plan.
+`UI_BASE_URL` can override the local test URL. Tests use isolated browser contexts.
+The optional `tests/manual-live-smoke.mjs` is deliberately excluded from automated
+suites; it makes three real Steam requests and requires a live-enabled local server
+and the private local collector export. See [migration verification](docs/plans/migration-verification.md)
+for coverage, results, and user-testing suggestions. The development-only `/ui`
+gallery displays shared primitives; production returns 404.
+
+## Features
+
+- Overview, searchable library/achievements, game details, completion optimizer,
+  trends, charts with data tables, and per-game verification dates.
+- Per-profile plans retain completed/inactive targets; JSON plan import/export and
+  Markdown checklists remain available.
+- Explicit quick/full refresh, bounded requests, persisted call reservations,
+  pause/resume, rate-limit recovery, and an explicit 1,000-call allowance extension.
+- Atomic browser saves, stale-tab conflict protection, deletion tombstones,
+  unsaved-data export, and damaged-storage recovery.
+
+## Vercel deployment
+
+The migration is implemented and tested locally; **it has not been deployed**.
+`vercel.json` selects SvelteKit and the adapter creates Vercel output. Verify the
+existing project's framework setting and preserve its production origin before rollout.
+
+Configure server-only variables from [.env.example](.env.example). Live imports are
+disabled unless `STEAM_IMPORT_ENABLED=true`. Before enabling a public deployment,
+configure and verify the planned WAF protection across both `/api/steam/*` endpoints,
+then run a small monitored pilot and inspect account usage. Local call allowances and
+signed permissions are not a global abuse-proof quota. There is no shared quota store.
+No paid services have been enabled and no cloud capacity/billing guarantee is implied
+by local tests. See [deployment checks](docs/plans/free-tier-readiness.md) and
+[monitoring notes](docs/plans/vercel-monitoring.md).
+
+## Collector fallback
+
+Python 3, standard library only:
+
+```bash
+python3 collector/steam_collect.py YOUR_STEAMID --key YOUR_API_KEY
+```
+
+The collector also accepts profile URLs/vanity names, `--workers` (default 1, maximum 4),
+`--max-calls` (default 1,000), and `--output`. Requests are serialized and spaced;
+there are no automatic retries. A systemic error or exhausted allowance stops the
+run without replacing the output. Restarting repeats work; prefer the browser importer
+for resumable imports.
+Key resolution: `--key` > `STEAM_WEB_API_KEY` > `collector/key.env`.
+`src/assets/collector.py` must match `collector/steam_collect.py`.
+
+## Design and implementation records
+
+- [Backend and storage plan](docs/plans/sveltekit-and-steam-import.md)
+- [Frontend screen plan](docs/plans/frontend-plan.md) and [illustrative drafts](docs/plans/frontend-preview.html)
+- [Shared style guide](docs/plans/ui-style-guide.md) and [shadcn adoption audit](docs/plans/shadcn-svelte-audit.md)
+- [Migration verification and testing handoff](docs/plans/migration-verification.md)
+
+Source lives in `src/routes`, `src/lib`, and `src/lib/components`; shared primitives
+are in `src/lib/components/ui`. Earlier durable-backend proposals are archived and
+are not first-release requirements.
