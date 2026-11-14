@@ -177,3 +177,16 @@ Review artifacts (local, not committed):
 - `/tmp/atlas-ui-repaired/`: desktop, 390px and 320px snapshots of seven screens.
 - `/tmp/atlas-browser-tests/1794692459081-repaired-library-320.png`: mobile Library.
 - `/tmp/atlas-browser-videos/page@2e9ab95398ac3d977527a6d47bb84741.webm`: controlled import walkthrough.
+
+
+## Full recheck follow-up
+
+Reproduced the Full recheck button doing no work: it changed a local mode while a separate
+Check profile button performed the lookup. Replaced the detached mode toggles with form
+actions for Quick refresh and Full recheck. Both validate the profile and open import review;
+review names the requested scope, and Start import still gates achievement batches.
+Initial visitors retain Check profile. Cooldowns and API limits are unchanged.
+
+`refresh-actions.mjs` failed on the old UI and passes on the repair, covering correct full/quick
+checkpoint modes, no batches before confirmation, required-profile validation and 320px reflow.
+The existing end-to-end file/plan/import/backup flow passes; Svelte check is clean.

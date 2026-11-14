@@ -12,7 +12,7 @@
     "test": "node --test tests/*.test.mjs",
     "prepare": "svelte-kit sync",
     "dev:local": "node scripts/dev-local.mjs",
-    "test:browser": "node tests/browser/flows.mjs && node tests/browser/recovery.mjs && node tests/browser/profile-denial.mjs && node tests/browser/game-denial.mjs && node tests/browser/no-achievements.mjs && node tests/browser/import-monitor.mjs && node tests/browser/navigation.mjs && node tests/browser/ui-continuity.mjs && node tests/browser/import-motion.mjs"
+    "test:browser": "node tests/browser/flows.mjs && node tests/browser/recovery.mjs && node tests/browser/profile-denial.mjs && node tests/browser/game-denial.mjs && node tests/browser/no-achievements.mjs && node tests/browser/import-monitor.mjs && node tests/browser/navigation.mjs && node tests/browser/ui-continuity.mjs && node tests/browser/import-motion.mjs && node tests/browser/refresh-actions.mjs"
   },
   "devDependencies": {
     "@internationalized/date": "^3.12.4",
