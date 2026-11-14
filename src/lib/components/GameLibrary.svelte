@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { LibrarySort as Sort, LibraryFilter as Filter } from "../view-state";
   import type { Freshness } from "#lib/backup.js";
   import * as ToggleGroup from "#lib/components/ui/toggle-group/index.js";
   import * as Pagination from "#lib/components/ui/pagination/index.js";
@@ -14,22 +15,20 @@
   import { formatDate, hoursFromMin } from "../format";
   import { itemKey, lockedItems, type PlanItem } from "../plan";
   let {
+    query = $bindable(""), filter = $bindable<Filter>("all"), sort = $bindable<Sort>("playtime"), ascending = $bindable(false), page = $bindable(0),
     data,
     items,
     freshness = {},
     onToggle,
     onGame,
   }: {
+    query?: string; filter?: Filter; sort?: Sort; ascending?: boolean; page?: number;
     data: SteamData;
     items: PlanItem[];
     freshness?: Freshness[string];
     onToggle: (item: PlanItem) => void;
     onGame: (appid: number) => void;
   } = $props();
-  type Sort = "name" | "playtime" | "completion" | "last";
-  let query = $state("");
-  type Filter = "all" | "achievements" | "almost" | "planned" | "completed";
-  let filter = $state<Filter>("all");
   const filters: { value: Filter; label: string }[] = [
     { value: "all", label: "All" },
     { value: "achievements", label: "With achievements" },
@@ -37,9 +36,6 @@
     { value: "planned", label: "In my plan" },
     { value: "completed", label: "Completed" },
   ];
-  let sort = $state<Sort>("playtime");
-  let ascending = $state(false);
-  let page = $state(0);
   const pageSize = 50;
   let planned = $derived(new Set(items.map(itemKey)));
   let plannedGames = $derived(new Set(items.map((item) => item.appid)));
@@ -90,10 +86,10 @@
   }
 </script>
 
-<Card.Root class="panel game-library">
+<Card.Root layout="padded" class="game-library">
   <header class="section-heading">
     <span class="muted" aria-live="polite"
-      >{rows.length.toLocaleString()} games</span
+      >{rows.length.toLocaleString()} {rows.length === 1 ? "game" : "games"}</span
     >
   </header>
   <div class="toolbar">
@@ -137,6 +133,7 @@
     >
   </div>
   <ToggleGroup.Root
+    spacing={2}
     type="single"
     value={filter}
     onValueChange={(value) => {
@@ -153,7 +150,7 @@
         >{f.label}</ToggleGroup.Item
       >{/each}
   </ToggleGroup.Root>
-  <div class="table-scroll">
+  <div class="table-scroll responsive-data">
     <Table.Root class="data-table">
       <Table.Header
         ><Table.Row
@@ -187,8 +184,8 @@
                   ? `Checked ${formatDate(freshness[game.appid].progress!)}${Date.now() - Date.parse(freshness[game.appid].progress!) > 7 * 86400000 ? " · Overdue" : ""}`
                   : "Not checked"}</small
               ></Table.Cell
-            ><Table.Cell>{hoursFromMin(game.playtime_forever_min)}h</Table.Cell>
-            <Table.Cell
+            ><Table.Cell data-label="Playtime">{hoursFromMin(game.playtime_forever_min)}h</Table.Cell>
+            <Table.Cell data-label="Completion"
               >{#if rate < 0}<span class="muted">No achievements</span
                 >{:else}<div class="completion-cell">
                   <Progress
@@ -203,7 +200,7 @@
                   >
                 </div>{/if}</Table.Cell
             >
-            <Table.Cell class="muted">{formatDate(game.last_played)}</Table.Cell
+            <Table.Cell data-label="Last played" class="muted">{formatDate(game.last_played)}</Table.Cell
             ><Table.Cell
               >{#if locked.length}<Button
                   size="sm"
@@ -217,7 +214,7 @@
           </Table.Row>
         {:else}<Table.Row
             ><Table.Cell colspan={5} class="empty-state"
-              >No games match these filters.</Table.Cell
+              >No games match these filters. <Button variant="outline" class="mt-3" onclick={()=>{query="";filter="all";page=0;}}>Clear filters</Button></Table.Cell
             ></Table.Row
           >{/each}
       </Table.Body>

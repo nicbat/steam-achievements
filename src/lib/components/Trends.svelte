@@ -175,7 +175,7 @@
 </script>
 
 <section class="trends" bind:clientWidth={chartWidth}>
-  <Card.Root class="chart-card">
+  <Card.Root layout="padded" class="chart-card">
     <div class="chart-heading">
       <div>
         <h2>Achievements over time</h2>
@@ -217,7 +217,7 @@
         No dated unlocks in this export yet.
       </p>{/if}
   </Card.Root>
-  <Card.Root class="chart-card">
+  <Card.Root layout="padded" class="chart-card">
     <div class="chart-heading">
       <div>
         <h2>Average completion over time</h2>
@@ -259,7 +259,7 @@
       </p>{/if}
   </Card.Root>
   <div class="chart-pair">
-    <Card.Root class="chart-card">
+    <Card.Root layout="padded" class="chart-card">
       <div class="chart-heading">
         <div>
           <h2>Rarity of your unlocks</h2>
@@ -287,7 +287,7 @@
         </BarChart>
       </Chart.Container>
     </Card.Root>
-    <Card.Root class="chart-card">
+    <Card.Root layout="padded" class="chart-card">
       <div class="chart-heading">
         <div>
           <h2>Library completion</h2>
@@ -311,7 +311,7 @@
       </Chart.Container>
     </Card.Root>
   </div>
-  <Card.Root class="chart-card">
+  <Card.Root layout="padded" class="chart-card">
     <div class="chart-heading">
       <div>
         <h2>Unlock cadence</h2>
@@ -340,7 +340,7 @@
         No dated unlocks in this export yet.
       </p>{/if}
   </Card.Root>
-  <Card.Root class="chart-card">
+  <Card.Root layout="padded" class="chart-card">
     <div class="chart-heading">
       <div>
         <h2>Playtime vs completion</h2>
@@ -397,7 +397,7 @@
         Play a game with achievements to see it here.
       </p>{/if}
   </Card.Root>
-  <Card.Root class="chart-card">
+  <Card.Root layout="padded" class="chart-card">
     <Collapsible.Root>
       <Collapsible.Trigger class="min-h-11 text-primary underline"
         >View chart data as tables</Collapsible.Trigger
@@ -469,7 +469,7 @@
 <style>
   .trends {
     display: grid;
-    gap: 20px;
+    gap: 24px;
     --color-primary: var(--primary);
     --color-surface-100: var(--card);
     --color-surface-200: var(--border);
@@ -478,20 +478,16 @@
   }
   :global(.chart-card) {
     min-width: 0;
-    padding: 22px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
   }
   .chart-heading {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-    margin-bottom: 26px;
+    margin-bottom: 16px;
   }
   .chart-heading h2 {
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 600;
     margin: 0;
   }
@@ -527,7 +523,7 @@
   .chart-pair {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
   }
   .tip {
     padding: 10px 12px;
@@ -637,12 +633,6 @@
     }
   }
   @media (max-width: 500px) {
-    :global(.chart-card) {
-      padding: 16px 10px;
-    }
-    .chart-heading {
-      padding: 0 5px;
-    }
     .chart-heading > strong {
       font-size: 19px;
     }

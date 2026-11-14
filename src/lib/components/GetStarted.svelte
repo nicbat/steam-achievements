@@ -49,7 +49,7 @@
   <Button variant="ghost" onclick={onBack}>Back</Button>
   <h1>Import your Steam data</h1>
   <p>Run the collector, then open the JSON file here. Python 3 required.</p>
-  <Card.Root class="panel">
+  <Card.Root layout="padded">
     <h2>1. Get an API key</h2>
     <p>
       <a
@@ -67,7 +67,7 @@
       /></Label
     >
   </Card.Root>
-  <Card.Root class="panel">
+  <Card.Root layout="padded">
     <h2>2. Run the collector</h2>
     <Label
       >Steam profile<Input
@@ -88,7 +88,7 @@
       If games are missing, set your Steam profile and Game details to Public.
     </p>
   </Card.Root>
-  <Card.Root class="panel">
+  <Card.Root layout="padded">
     <h2>3. Open the file</h2>
     <p>Choose steam_data.json from the collector’s folder.</p>
     <Button onclick={onBack}>Import JSON</Button>

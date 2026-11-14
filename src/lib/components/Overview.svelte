@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Artwork from "./Artwork.svelte";
   import * as Collapsible from "#lib/components/ui/collapsible/index.js";
   import { Progress } from "#lib/components/ui/progress/index.js";
   import * as Card from "#lib/components/ui/card/index.js";
@@ -73,11 +74,7 @@
 
 <section class="overview">
   <header class="profile">
-    {#if data.player.avatar}<img
-        class="avatar"
-        src={data.player.avatar}
-        alt=""
-      />{/if}
+    <Artwork class="avatar" src={data.player.avatar} />
     <div>
       <h2>{data.player.persona_name ?? data.steamid64}</h2>
       <p>
@@ -96,7 +93,7 @@
   </header>
   <div class="stats">
     {#each stats as stat}<Card.Root
-        class={stat.accent ? "stat accent" : "stat"}
+        layout="padded" class={stat.accent ? "stat accent" : "stat"}
       >
         <h2>{stat.label}</h2>
         <strong>{stat.value}</strong>
@@ -114,7 +111,7 @@
       )}.</Collapsible.Content
     >
   </Collapsible.Root>
-  {#if items.length}<Card.Root class="projection !flex-row">
+  {#if items.length}<Card.Root layout="padded" class="overview-projection">
       <div>
         <strong>Your plan</strong>
         <p>
@@ -143,15 +140,7 @@
             variant="ghost"
             class="game-card !h-auto !block !whitespace-normal"
             onclick={() => onGame(game.appid)}
-            ><img
-              src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`}
-              alt=""
-              loading="lazy"
-              onerror={(event) => {
-                (event.currentTarget as HTMLImageElement).style.display =
-                  "none";
-              }}
-            />
+            ><Artwork class="game-artwork" src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`} />
             <div class="game-info">
               <strong>{game.name}</strong>
               <div class="game-detail">
@@ -183,15 +172,7 @@
             class="rare-row !h-auto !justify-start"
             onclick={() => onGame(achievement.appid)}
             title={achievement.description ?? undefined}
-            >{#if achievement.icon}<img
-                src={achievement.icon}
-                alt=""
-                loading="lazy"
-                onerror={(event) => {
-                  (event.currentTarget as HTMLImageElement).style.display =
-                    "none";
-                }}
-              />{:else}<span class="icon-fallback">◆</span>{/if}<span
+            ><Artwork class="achievement-artwork" src={achievement.icon} /><span
               class="rare-title"
               ><strong>{achievement.name}</strong><span>{achievement.game}</span
               ></span
@@ -215,7 +196,7 @@
     align-items: center;
     gap: 16px;
   }
-  .avatar {
+  :global(.avatar) {
     width: 64px;
     height: 64px;
     border-radius: 12px;
@@ -242,17 +223,11 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
   }
-  .stats :global(.stat) {
-    padding: 20px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
-  }
   .stats h2 {
     font-size: 14px;
     font-weight: 500;
     color: var(--muted-foreground);
-    margin: 0 0 14px;
+    margin: 0;
   }
   .stats strong {
     font-size: 29px;
@@ -266,19 +241,17 @@
   .stats p {
     font-size: 14px;
     color: var(--muted-foreground);
-    margin: 8px 0 0;
+    margin: 0;
   }
-  :global(.projection) {
+  :global(.overview-projection) {
     display: flex;
     justify-content: space-between;
     gap: 16px;
     align-items: center;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 22px;
-    background: var(--card);
+    flex-direction: row;
+    flex-wrap: wrap;
   }
-  :global(.projection) p {
+  :global(.overview-projection) p {
     font-size: 14px;
     color: var(--muted-foreground);
     margin: 5px 0 0;
@@ -308,7 +281,7 @@
   }
   .section-head h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 600;
   }
   .almost-grid {
@@ -327,11 +300,11 @@
     cursor: pointer;
     font: inherit;
   }
-  :global(.game-card > img) {
+  :global(.game-artwork) {
     width: 100%;
     aspect-ratio: 460/160;
     object-fit: cover;
-    display: block;
+    display: flex;
   }
   .game-info {
     padding: 14px;
@@ -373,8 +346,7 @@
   :global(.rare-row):last-child {
     border: 0;
   }
-  :global(.rare-row > img),
-  .icon-fallback {
+  :global(.achievement-artwork) {
     width: 36px;
     height: 36px;
     border-radius: 5px;
@@ -437,9 +409,6 @@
     :global(.steam-link) {
       margin-left: 80px;
     }
-    .stats :global(.stat) {
-      padding: 15px;
-    }
     .stats strong {
       font-size: 25px;
     }
@@ -449,7 +418,7 @@
     :global(.rare-row) time {
       display: none;
     }
-    :global(.projection) {
+    :global(.overview-projection) {
       align-items: flex-start;
       flex-direction: column;
     }

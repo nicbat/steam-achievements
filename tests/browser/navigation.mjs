@@ -11,14 +11,16 @@ try {
     await p.setViewportSize({ width, height: 900 });
     for (const name of ['Library', 'Overview']) {
       const selected = nav.getByRole('button', { name, exact: true });
-      await selected.click();
+      if (width > 900) await selected.click();
+      else await p.getByLabel('Go to', { exact: true }).selectOption({ label: name });
       await p.getByRole('heading', { name, exact: true }).waitFor();
       // Move away: hover previously masked the missing selected appearance.
       await p.mouse.move(width - 5, 880);
       await p.evaluate(() => Promise.all(document.getAnimations().map(animation => animation.finished.catch(() => {}))));
-      assert.equal(await nav.locator('[aria-current="page"]').count(), 1);
-      assert.equal(await selected.getAttribute('aria-current'), 'page');
-      const appearance = await selected.evaluate(element => {
+      assert.equal(await p.locator('.sidebar [aria-current="page"]').count(), 1);
+      const item = p.locator('.sidebar button').filter({ hasText: new RegExp(`^${name}$`) });
+      assert.equal(await item.getAttribute('aria-current'), 'page');
+      const appearance = await item.evaluate(element => {
         const style = getComputedStyle(element);
         return { background: style.backgroundColor, color: style.color, alignment: style.justifyContent };
       });

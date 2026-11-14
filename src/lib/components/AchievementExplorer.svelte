@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { AchievementSort as Sort, AchievementFilter as Filter } from "../view-state";
   import * as Collapsible from "#lib/components/ui/collapsible/index.js";
   import * as ToggleGroup from "#lib/components/ui/toggle-group/index.js";
   import * as Pagination from "#lib/components/ui/pagination/index.js";
@@ -14,23 +15,18 @@
   import { formatDate, pctRate, signed2, signed5 } from "../format";
 
   let {
+    query = $bindable(""), filter = $bindable<Filter>("all"), sort = $bindable<Sort>("rarity"), ascending = $bindable(false), page = $bindable(0),
     data,
     items,
     onToggle,
     onGame,
   }: {
+    query?: string; filter?: Filter; sort?: Sort; ascending?: boolean; page?: number;
     data: SteamData;
     items: PlanItem[];
     onToggle: (item: PlanItem) => void;
     onGame: (appid: number) => void;
   } = $props();
-  type Sort = "rarity" | "impact" | "name" | "game" | "date";
-  type Filter = "all" | "unlocked" | "locked" | "rare" | "recent";
-  let query = $state("");
-  let filter = $state<Filter>("all");
-  let sort = $state<Sort>("rarity");
-  let ascending = $state(false);
-  let page = $state(0);
   const pageSize = 50;
   const filters: { value: Filter; label: string }[] = [
     { value: "all", label: "All" },
@@ -104,7 +100,7 @@
   }
 </script>
 
-<Card.Root class="panel achievement-explorer">
+<Card.Root layout="padded" class="achievement-explorer">
   <header class="section-heading">
     <span class="muted" aria-live="polite"
       >{rows.length.toLocaleString()} of {all.length.toLocaleString()}</span
@@ -154,6 +150,7 @@
     >
   </div>
   <ToggleGroup.Root
+    spacing={2}
     type="single"
     value={filter}
     onValueChange={(value) => {
@@ -177,7 +174,7 @@
       your plan.</Collapsible.Content
     ></Collapsible.Root
   >
-  <div class="table-scroll">
+  <div class="table-scroll responsive-data">
     <Table.Root class="data-table">
       <Table.Header
         ><Table.Row
@@ -211,19 +208,19 @@
                 </div>
               </div></Table.Cell
             >
-            <Table.Cell
+            <Table.Cell data-label="Game"
               ><Button
                 variant="link"
                 class="text-button"
                 onclick={() => onGame(a.appid)}>{a.game}</Button
               ></Table.Cell
             >
-            <Table.Cell
+            <Table.Cell data-label="Global unlock rate"
               class={a.globalRate != null && a.globalRate < 5
                 ? "rare"
                 : undefined}>{pctRate(a.globalRate)}</Table.Cell
             >
-            <Table.Cell
+            <Table.Cell data-label={a.unlocked ? "Unlocked" : "Completion impact"}
               >{#if a.unlocked}<span class="positive"
                   >✓ {formatDate(a.unlockTime)}</span
                 >{:else if change != null}<span
@@ -246,7 +243,7 @@
           </Table.Row>
         {:else}<Table.Row
             ><Table.Cell colspan={5} class="empty-state"
-              >No achievements match these filters.</Table.Cell
+              >No achievements match these filters. <Button variant="outline" class="mt-3" onclick={()=>{query="";filter="all";page=0;}}>Clear filters</Button></Table.Cell
             ></Table.Row
           >{/each}
       </Table.Body>

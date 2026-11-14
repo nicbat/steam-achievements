@@ -118,7 +118,7 @@
 </script>
 
 <section class="optimizer">
-  <Card.Root class="panel summary !flex-row">
+  <Card.Root layout="padded" class="optimizer-summary">
     <div><small>Current average</small><strong>{base.displayed}%</strong></div>
     <span class="arrow">→</span>
     <div>
@@ -135,7 +135,7 @@
     </p>
   </Card.Root>
   <div class="columns">
-    <Card.Root class="panel">
+    <Card.Root layout="padded">
       <div class="section-head">
         <h2>Almost perfect</h2>
         <span>{opt.nearPerfect.length} games</span>
@@ -173,7 +173,7 @@
         </div>
       {:else}<p class="empty">No almost-perfect games.</p>{/each}
     </Card.Root>
-    <Card.Root class="panel">
+    <Card.Root layout="padded">
       <div class="section-head">
         <h2>Best next unlocks</h2>
         <span>Started games</span>
@@ -204,7 +204,7 @@
       {:else}<p class="empty">No next unlocks found.</p>{/each}
     </Card.Root>
   </div>
-  <Card.Root class="panel">
+  <Card.Root layout="padded">
     <div class="section-head">
       <h2>Find your next game</h2>
       <span>{finder.length} matches</span>
@@ -269,7 +269,7 @@
         Lower either threshold to find more games.
       </p>{/each}
   </Card.Root>
-  <Card.Root class="panel">
+  <Card.Root layout="padded">
     <div class="section-head">
       <h2>Common achievements still locked</h2>
       <span>Top {easy.length}</span>
@@ -322,33 +322,35 @@
     line-height: 1.6;
     color: var(--muted-foreground);
   }
-  :global(.summary) {
+  :global(.optimizer-summary) {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
-  :global(.summary) small {
+  :global(.optimizer-summary) small {
     display: block;
-    font-size: 10px;
+    font-size: 14px;
     letter-spacing: normal;
     color: var(--muted-foreground);
   }
-  :global(.summary) strong {
+  :global(.optimizer-summary) strong {
     display: block;
-    font-size: 42px;
-    letter-spacing: -2px;
+    font-size: 32px;
+    letter-spacing: -0.7px;
     margin-top: 8px;
   }
   :global(.accent),
   .impact {
     color: var(--primary);
   }
-  :global(.summary) p {
+  :global(.optimizer-summary) p {
     margin-left: auto;
     font-size: 14px;
     line-height: 1.8;
   }
-  :global(.summary) p span {
+  :global(.optimizer-summary) p span {
     color: var(--muted-foreground);
   }
   .arrow {
@@ -367,7 +369,7 @@
     gap: 12px;
   }
   h2 {
-    font-size: 18px;
+    font-size: 24px;
     margin: 0;
   }
   .section-head > span {
@@ -476,14 +478,14 @@
     }
   }
   @media (max-width: 650px) {
-    :global(.summary) {
+    :global(.optimizer-summary) {
       gap: 16px;
       flex-wrap: wrap;
     }
-    :global(.summary) strong {
+    :global(.optimizer-summary) strong {
       font-size: 34px;
     }
-    :global(.summary) p {
+    :global(.optimizer-summary) p {
       width: 100%;
       margin: 0;
     }

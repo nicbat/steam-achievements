@@ -36,7 +36,7 @@ try {
   await p.setViewportSize({width:320,height:800});
   assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await ui.shoot('import-activity-mobile');
-  await p.reload(); await p.getByRole('navigation',{name:'Main navigation'}).waitFor();
+  await p.reload(); await p.getByLabel('Go to',{exact:true}).waitFor();
   assert.equal(starts,1); assert.equal(batches,1); assert.deepEqual(ui.errors,[]);
   console.log(JSON.stringify({result:'No-achievement game completes automatically, dependent calls pruned, actual calls counted, absence cached and reload sends no requests.',shots:ui.shots}));
 } catch(error) {console.log({starts,batches,errors:ui.errors});console.log(await p.locator('body').innerText());throw error;} finally {await ui.close();}

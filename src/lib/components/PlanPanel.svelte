@@ -22,6 +22,8 @@
     onClear,
     onMerge,
     onClose,
+    showHeading = false,
+    onBrowse,
   }: {
     data: SteamData;
     items: PlanItem[];
@@ -29,6 +31,8 @@
     onClear: () => void;
     onMerge: (items: PlanItem[]) => void;
     onClose: () => void;
+    showHeading?: boolean;
+    onBrowse: () => void;
   } = $props();
   let error = $state("");
   let fileInput: HTMLInputElement;
@@ -82,14 +86,14 @@
   }
 </script>
 
-<Card.Root class="panel plan-panel" aria-label="Your plan">
-  <header>
+<Card.Root layout="padded" class="plan-panel" aria-label="Your plan">
+  {#if showHeading}<header>
     <div><h2>Your plan <small>{items.length}</small></h2></div>
     <Button variant="outline" onclick={onClose} aria-label="Close plan"
       >×</Button
     >
-  </header>
-  <Card.Root class="projection">
+  </header>{/if}
+  <Card.Root layout="padded" class="plan-projection">
     <span>{base.displayed}%</span><span aria-hidden="true">→</span><strong
       >{projected.displayed}%</strong
     >
@@ -123,7 +127,7 @@
             >
           </div>{/each}
       </section>
-    {:else}<p class="empty">Add achievements to build your plan.</p>{/each}
+    {:else}<p class="empty">Add achievements to build your plan.</p><Button variant="outline" onclick={onBrowse}>Find achievements</Button>{/each}
   </div>
   <footer>
     <Button
@@ -196,7 +200,7 @@
   }
   h2 {
     margin: 4px 0;
-    font-size: 22px;
+    font-size: 24px;
   }
   h3 {
     font-size: 14px;
@@ -210,13 +214,15 @@
   small {
     font-size: 14px;
   }
-  :global(.projection) {
+  :global(.plan-projection) {
     display: flex;
-    gap: 18px;
+    gap: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     font-size: 30px;
   }
-  :global(.projection) strong {
+  :global(.plan-projection) strong {
     color: var(--primary);
   }
   .muted {

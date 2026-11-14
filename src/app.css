@@ -63,66 +63,62 @@
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
 }
-* {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-  background: var(--background);
-  color: var(--foreground);
-  font:
-    16px/1.5 "Segoe UI",
-    system-ui,
-    sans-serif;
-}
-button,
-input,
-select {
-  font: inherit;
-}
-button {
-  cursor: pointer;
-}
-button:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-a {
-  color: var(--primary);
-}
-:focus-visible {
-  outline: 3px solid var(--gold) !important;
-  outline-offset: 4px;
-}
-h1,
-h2,
-h3,
-p {
-  margin: 0;
-}
-h1 {
-  font-size: 32px;
-  letter-spacing: -0.7px;
-  font-weight: 650;
-}
-h2 {
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-}
-h3 {
-  font-size: 18px;
-  font-weight: 600;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font:
+      16px/1.5 "Segoe UI",
+      system-ui,
+      sans-serif;
+  }
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+  a {
+    color: var(--primary);
+  }
+  :focus-visible {
+    outline: 3px solid var(--gold) !important;
+    outline-offset: 4px;
+  }
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+  h1 {
+    font-size: 32px;
+    letter-spacing: -0.7px;
+    font-weight: 650;
+  }
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+  }
 }
 .muted,
 small {
   color: var(--muted-foreground);
-}
-.panel {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px;
 }
 .empty {
   padding: 40px 20px;
@@ -143,22 +139,7 @@ small {
 }
 .stack {
   display: grid;
-  gap: 22px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  text-align: left;
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--muted-foreground);
-}
-th,
-td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border);
+  gap: 24px;
 }
 code {
   font-size: 14px;
@@ -166,22 +147,11 @@ code {
 button svg {
   flex-shrink: 0;
 }
-.link-button {
-  color: var(--primary);
-  background: none;
-  border: 0;
-  padding: 0;
-  text-align: left;
-}
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-}
 .shell {
   max-width: 1600px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
 }
 .topbar {
@@ -212,8 +182,9 @@ button svg {
   gap: 10px;
 }
 .layout {
+  flex: 1;
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
+  grid-template-columns: 224px minmax(0, 1fr);
 }
 .sidebar {
   padding: 28px 16px;
@@ -244,76 +215,12 @@ button svg {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 26px;
+  margin-bottom: 32px;
 }
 .view-header p {
   font-size: 14px;
   color: var(--muted-foreground);
   margin-top: 5px;
-}
-.demo-badge {
-  font-size: 12px;
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 3px 7px;
-  color: var(--muted-foreground);
-}
-.landing {
-  max-width: 1100px;
-  margin: 70px auto;
-  padding: 0 28px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 70px;
-  align-items: center;
-}
-.landing h1 {
-  font-size: 48px;
-  line-height: 1.12;
-  letter-spacing: -1.7px;
-  margin: 14px 0 20px;
-}
-.landing .lede {
-  font-size: 17px;
-  color: var(--muted-foreground);
-  max-width: 360px;
-  margin-bottom: 26px;
-}
-.landing-art {
-  display: grid;
-  gap: 14px;
-  transform: rotate(-2deg);
-}
-.landing-art img {
-  width: 100%;
-  border-radius: 7px;
-}
-.landing-art .sample-game {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  background: var(--card);
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-}
-.sample-game img {
-  width: 135px;
-}
-.sample-game small {
-  display: block;
-}
-.upload-box {
-  border: 1px dashed var(--input);
-  border-radius: 10px;
-  padding: 26px;
-  background: var(--card);
-  margin: 24px 0 12px;
-}
-.upload-box p {
-  font-size: 14px;
-  color: var(--muted-foreground);
-  margin-top: 8px;
 }
 .site-footer {
   padding: 24px 32px;
@@ -335,9 +242,6 @@ button svg {
   margin: 16px 0;
   font-size: 14px;
 }
-.guide .panel {
-  margin-top: 18px;
-}
 .guide p {
   color: var(--muted-foreground);
   margin: 10px 0;
@@ -351,32 +255,6 @@ button svg {
   border-radius: 7px;
   margin: 15px 0;
 }
-.notice {
-  padding: 12px 16px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-.plan-backdrop {
-  position: fixed;
-  inset: 0;
-  background: #050c16aa;
-  z-index: 40;
-}
-.plan-sheet {
-  position: fixed;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: min(440px, 100%);
-  overflow: auto;
-  background: var(--card);
-  border-left: 1px solid var(--border);
-  padding: 24px;
-  z-index: 41;
-}
 .loading {
   padding: 80px;
   text-align: center;
@@ -387,85 +265,7 @@ button svg {
     padding: 36px 45px;
   }
 }
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  .sidebar {
-    flex-direction: row;
-    overflow: auto;
-    padding: 10px 16px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .sidebar button {
-    white-space: nowrap;
-  }
-  .sidebar small {
-    display: none;
-  }
-  .content {
-    padding: 24px 18px;
-  }
-  .topbar {
-    padding: 0 18px;
-  }
-  .landing {
-    gap: 25px;
-    margin-top: 40px;
-  }
-  .landing h1 {
-    font-size: 38px;
-  }
-}
-@media (max-width: 600px) {
-  .landing {
-    grid-template-columns: 1fr;
-    margin: 32px auto;
-  }
-  .landing-art {
-    display: none;
-  }
-  .wordmark {
-    font-size: 16px;
-  }
-  .topbar {
-    gap: 10px;
-    height: 65px;
-  }
-  .top-actions .import-label {
-    display: none;
-  }
-  .sidebar button {
-    padding: 9px;
-  }
-  .sidebar button svg {
-    display: none;
-  }
-  .view-header {
-    align-items: start;
-  }
-  .site-footer {
-    padding: 20px 18px;
-    display: block;
-  }
-  .site-footer span {
-    display: block;
-    margin: 4px 0;
-  }
-  .content {
-    padding: 20px 14px;
-  }
-  .panel {
-    padding: 17px;
-  }
-  .landing h1 {
-    font-size: 40px;
-  }
-  .top-actions {
-    gap: 6px;
-  }
-}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
@@ -477,13 +277,11 @@ button svg {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
 }
 .toolbar {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
 }
 .toolbar input {
   flex: 1;
@@ -558,11 +356,6 @@ button svg {
   text-align: center;
   padding: 35px;
 }
-.plan-sheet > .plan-panel {
-  border: none;
-  padding: 0;
-  background: transparent;
-}
 .data-table strong {
   font-weight: 500;
 }
@@ -585,7 +378,7 @@ button svg {
   background: transparent;
 }
 .layout.docked {
-  grid-template-columns: 170px minmax(0, 1fr) 320px;
+  grid-template-columns: 224px minmax(0, 1fr) 320px;
 }
 .docked .content {
   padding: 26px 22px;
@@ -656,23 +449,6 @@ button svg {
   text-align: left;
   padding-inline: 0;
 }
-.filter-toggle {
-  border-radius: 999px;
-}
-@media (max-width: 600px) {
-  .toolbar > *,
-  .toolbar [data-slot="native-select-wrapper"] {
-    max-width: 100%;
-    min-width: 0;
-  }
-  .view-header {
-    flex-wrap: wrap;
-  }
-  .pagination {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-}
 
 .field {
   display: grid;
@@ -690,7 +466,157 @@ button svg {
 }
 
 /* Small screens retain every global action without creating page overflow. */
+
+[data-slot="dialog-title"],
+[data-slot="sheet-title"],
+[data-slot="alert-dialog-title"] {
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+[data-slot="card-title"] {
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+/* Mobile navigation exposes every destination without a sideways strip. */
+.mobile-nav {
+  display: none;
+}
+
+/* Keep one semantic table and one set of actions; reflow each record on narrow screens. */
+@media (max-width: 700px) {
+  .responsive-data,
+  .responsive-data [data-slot="table-container"] {
+    overflow: visible;
+  }
+  .responsive-data table,
+  .responsive-data tbody {
+    display: block;
+    width: 100%;
+  }
+  .responsive-data thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .responsive-data tbody tr {
+    display: grid;
+    gap: 12px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .responsive-data tbody tr:hover {
+    background: transparent;
+  }
+  .responsive-data td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .responsive-data td:empty {
+    display: none;
+  }
+  .responsive-data td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    color: var(--muted-foreground);
+    margin-bottom: 4px;
+  }
+  .responsive-data .achievement-cell {
+    align-items: start;
+  }
+  .responsive-data .achievement-cell > div {
+    min-width: 0;
+  }
+  .responsive-data .achievement-description {
+    white-space: normal;
+    max-width: none;
+    display: block;
+  }
+  .responsive-data .text-button {
+    min-height: 44px;
+    white-space: normal;
+  }
+  .responsive-data .completion-cell {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .layout {
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr;
+  }
+  .content {
+    padding: 24px 18px;
+  }
+  .topbar {
+    padding: 0 18px;
+  }
+
+  .mobile-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-nav [data-slot="native-select-wrapper"] {
+    flex: 1;
+  }
+  .mobile-nav select {
+    width: 100%;
+  }
+}
+
 @media (max-width: 600px) {
+  .wordmark {
+    font-size: 16px;
+  }
+  .topbar {
+    gap: 10px;
+    height: 65px;
+  }
+  .view-header {
+    align-items: start;
+  }
+  .site-footer {
+    padding: 20px 18px;
+    display: block;
+  }
+  .site-footer span {
+    display: block;
+    margin: 4px 0;
+  }
+  .content {
+    padding: 20px 14px;
+  }
+  .top-actions {
+    gap: 6px;
+  }
+
+  .toolbar > *,
+  .toolbar [data-slot="native-select-wrapper"] {
+    max-width: 100%;
+    min-width: 0;
+  }
+  .view-header {
+    flex-wrap: wrap;
+  }
+  .pagination {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .topbar {
     height: auto;
     min-height: 65px;
@@ -707,19 +633,11 @@ button svg {
     flex-wrap: wrap;
   }
   .top-actions [data-slot="button"] {
-    flex: 1;
+    flex: 1 0 auto;
+    white-space: nowrap;
   }
-  .sidebar {
-    max-width: 100vw;
-  }
-}
-[data-slot="dialog-title"],
-[data-slot="sheet-title"],
-[data-slot="alert-dialog-title"] {
-  font-size: 24px;
-  line-height: 1.3;
-  font-weight: 600;
-}
 
-[data-slot="card-title"] { font-size: 18px; line-height: 1.4; }
-@media (max-width: 600px) { h1 { font-size: 28px; } }
+  h1 {
+    font-size: 28px;
+  }
+}
