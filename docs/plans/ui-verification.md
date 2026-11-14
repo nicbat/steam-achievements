@@ -1,5 +1,8 @@
 # Svelte UI verification
 
+> Historical migration record. Status, test totals and proposed behavior below may be
+> superseded. See [current handoff](agent-handoff.md) and [workflow](../../CONTRIBUTING.md).
+
 **Implementation update (2026-11-14):** the migration is now implemented locally.
 See [current verification and rollout gates](migration-verification.md). The original
 planning/audit evidence below is retained as historical context, not current completion status.
@@ -23,20 +26,20 @@ checks used 1440px width. Screenshots below are local artifacts, not deployed UR
 
 ## Current captures
 
-- [Overview with loaded artwork](/tmp/steam-ui/2026-11-10T00-55-55-svelte-overview.png)
-- [Trends](/tmp/steam-ui/2026-11-10T00-55-56-svelte-trends.png)
-- [Scatter tooltip](/tmp/steam-ui/2026-11-10T00-55-56-svelte-scatter-tooltip.png)
-- [Production mobile overview](/tmp/ui-capture/steam-data/2026-11-10T00-57-23-svelte-mobile.png)
-- [Production mobile plan](/tmp/ui-capture/steam-data/2026-11-10T00-57-23-svelte-plan-mobile.png)
-- [Production library](/tmp/ui-capture/steam-data/2026-11-10T00-57-23-svelte-library-final.png)
+- Overview with loaded artwork (historical artifact: `/tmp/steam-ui/2026-11-10T00-55-55-svelte-overview.png`)
+- Trends (historical artifact: `/tmp/steam-ui/2026-11-10T00-55-56-svelte-trends.png`)
+- Scatter tooltip (historical artifact: `/tmp/steam-ui/2026-11-10T00-55-56-svelte-scatter-tooltip.png`)
+- Production mobile overview (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-57-23-svelte-mobile.png`)
+- Production mobile plan (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-57-23-svelte-plan-mobile.png`)
+- Production library (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-57-23-svelte-library-final.png`)
 
 ## Earlier inspection captures
 
-- [Initial overview before artwork finished loading](/tmp/ui-capture/steam-data/2026-11-10T00-52-51-svelte-overview.png)
-- [Library search](/tmp/ui-capture/steam-data/2026-11-10T00-52-52-svelte-library.png)
-- [Development mobile overview](/tmp/ui-capture/steam-data/2026-11-10T00-55-41-svelte-mobile.png)
-- [Development mobile plan](/tmp/ui-capture/steam-data/2026-11-10T00-55-41-svelte-plan-mobile.png)
-- [Development library](/tmp/ui-capture/steam-data/2026-11-10T00-55-41-svelte-library-final.png)
+- Initial overview before artwork finished loading (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-52-51-svelte-overview.png`)
+- Library search (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-52-52-svelte-library.png`)
+- Development mobile overview (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-55-41-svelte-mobile.png`)
+- Development mobile plan (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-55-41-svelte-plan-mobile.png`)
+- Development library (historical artifact: `/tmp/ui-capture/steam-data/2026-11-10T00-55-41-svelte-library-final.png`)
 
 ## Limits
 

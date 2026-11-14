@@ -1,5 +1,8 @@
 # Minimal backend, browser-owned data, and direct Steam imports
 
+> Historical migration record. Status, test totals and proposed behavior below may be
+> superseded. See [current handoff](agent-handoff.md) and [workflow](../../CONTRIBUTING.md).
+
 Updated 2026-11-14 following the user's simplification decision.
 Status: implemented locally on 2026-11-14, including the minimal backend, combined
 backups, resumable browser imports, and conditional leave-page warning. Not deployed.

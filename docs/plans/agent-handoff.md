@@ -1,96 +1,62 @@
-# Fresh-agent handoff
+# Current handoff
 
-**2026-11-14 UI audit update:** Work is now committed on `ui/consistency-audit`.
-The inherited migration is checkpoint commit `253793e`. See
-[UI repair plan](ui-repair-plan.md) for reproduced issues, the first navigation fix,
-and implementation/verification details. The repair now covers shared styles, mobile
-navigation/rows, retained filters, plan presentations and import scrolling. Older statements below about uncommitted work are historical.
+Updated 2026-11-14. Start with [repository rules](../../AGENTS.md) and
+[the contribution workflow](../../CONTRIBUTING.md). This file replaces the prior
+append-only handoff; historical migration evidence is linked from the [docs index](../README.md).
 
-Start here, then read `docs/plans/migration-verification.md` for implementation
-history and evidence. Later sections supersede earlier serial-import decisions.
+## Branch and review state
 
-## User's current priority
+Work is committed on `ui/consistency-audit` in [draft PR #1](https://github.com/nicbat/steam-achievements/pull/1).
+The inherited React-to-SvelteKit migration is checkpoint `253793e`; main still contains
+the prior app at this handoff. The PR includes that baseline as well as repairs, so its
+scope is larger than a UI bugfix. Do not interpret preservation of the baseline as approval.
+Check Git before relying on these branch facts in a later session.
 
-Work through the frontend and backend by actually interacting with the site.
-Prioritize a calm, concise import flow, clear ordinary no-achievement outcomes,
-correct error handling and conservative API spending. Existing tests alone are
-not proof the experience is good. Keep shadcn-svelte and the established theme.
-The user welcomes subagents, wants incremental complexity, and does not want
-Cloudflare, a cloud database, paid hosting dependencies or background jobs.
+Vercel creates PR previews automatically. Production rollout has not been verified in
+this audit. Do not equate a preview, build or test pass with public-import readiness.
 
-## Workspace and runtime
+## Completed and verified
 
-- Project: `/home/nicbat/Projects/steam-data`.
-- `npm run dev:local` serves http://127.0.0.1:5188 with the existing private key.
-  Never print keys, signing secrets, or request URLs containing credentials.
-- Start only one server. Stop it before production build because SvelteKit shares
-  generated output; restart it for user testing afterward.
-- The React-to-Svelte migration and follow-ups are uncommitted. Preserve the large
-  existing working tree. Nothing has been deployed or committed in this session.
-- Users own data in browser IndexedDB with export/restore. Tests use isolated
-  browser contexts. Do not clear the user's normal browser data.
+The [UI repair record](ui-repair-plan.md) documents navigation selection, shared styling,
+mobile records/navigation, retained filters, plan presentations, stable artwork and import
+scrolling. Follow-ups repair Full recheck/Quick refresh, collector file selection and
+clipboard feedback, game-detail filter reset/recovery, and Refresh library after completion.
 
-## Current import behavior
+Application commit `8fc5a6b` passed [Verify application run 43647145302](https://github.com/nicbat/steam-achievements/actions/runs/43647145302):
+Svelte check, 98 JavaScript tests, 12 Python tests, all mocked browser flows and production
+build. Local checks also passed. No real Steam calls were used by these tests. Visual
+artifacts referenced in the repair record live under `/tmp` and may no longer exist.
 
-- Minimal SvelteKit backend; Steam key remains server-side.
-- Browser sends one group at a time, three games / up to nine operations.
-- Backend runs three concurrent game workers; each game's schema precedes its
-  dependent progress/rarity requests. No artificial 500ms/five-second waits.
-- Confirmed absent schema is normal, cached seven days, and suppresses dependent
-  calls. Known unavailable player progress has a separate one-day cache, bypassed
-  when play history changes. Empty uploaded arrays alone do not prove absence.
-- Unknown 403/auth/rate-limit/network/malformed responses pause. No automatic
-  retries. Existing in-flight parallel calls settle and save their results.
-- Per-browser 1,000-call allowance, explicit extensions, reservations before
-  dispatch, browser locks and durable checkpoints. Limits are not a global quota.
-- Saved checkpoints resume only explicitly. Exact old no-schema failures can
-  trigger one fresh schema check on Resume to repair legacy pending rarity work.
+Repository workflow now has canonical rules, a contribution guide, a documentation index,
+a PR template and application CI. These describe the process; they do not enforce branch
+protection or prove all interactions correct.
 
-## Current UI
+## Next work and limits
 
-`ImportPanel.svelte` handles actions/review/diagnostics; `ImportMonitor.svelte`
-shows a small virtualized window of stable game rows. Primary action is above the
-list. Pause becomes disabled Pausing immediately while current work settles.
-Elapsed time is real; outcomes arrive by group, with no fabricated ETA/progress.
-Technical log is collapsed by default, chronological, max 100 events. It is not a
-permanent archive; completed logs disappear when the in-memory screen is gone.
+1. Keep this PR draft while reviewing the inherited migration and repaired interface.
+2. Continue focused acceptance checks for optimizer thresholds, plan import/export variants,
+   and backup/restore entry points. Record exact starting states and outcomes; fix confirmed
+   issues in separate commits. Do not begin another broad redesign.
+3. Actual-user comprehension, accessibility conformance and live-network performance remain
+   unproven. “Choppy” was investigated as visible layout/scroll behavior; no frame-time
+   benchmark established a general runtime performance diagnosis.
+4. Before public live imports, verify deployment protections and a monitored pilot using
+   [deployment checks](free-tier-readiness.md) and [monitoring](vercel-monitoring.md).
+   Browser accounting is not a global quota across server instances or hostile clients.
 
-Latest fixes: normal batch responses now set retryAt=0, preventing a stale UI
-clock from briefly showing Resume after. Genuine cooldown notice stays in a
-stable row while paused and becomes Ready to resume at expiry. Confirmed no-schema
-dependent skips no longer add unavailable failures or progress-unavailable cache
-entries. Exact historical no-schema skip messages are removed from checkpoint
-failure summaries on reload. Genuine missing/private stats remain distinct.
+## Contracts to preserve
 
-## Key implementation files
+- SvelteKit, shadcn-svelte and the existing theme; browser-owned IndexedDB data with backup
+  export/restore. No new cloud database, paid service or background-job requirement.
+- Server-only Steam key. One browser request group at a time: three games/up to nine
+  operations, three server game workers; schema precedes dependent requests.
+- Explicit profile review and resume; bounded allowance and persisted reservations.
+  No automatic retry or import on reload. In-flight results settle before pause completes.
+- Confirmed absent schema is a normal seven-day cache; unavailable progress uses a separate
+  one-day cache. Uploaded empty arrays alone do not prove absent schema.
+- Paused/active checkpoints and unsaved-data recovery survive UI repairs. Tests use isolated
+  browser storage and mocked Steam endpoints; never reset the user's normal browser data.
 
-- `src/lib/server/steam-import.ts`: endpoints, parsing, bounds, game workers.
-- `src/lib/import-controller.ts`: lifecycle, persistence, accounting, pause/logs.
-- `src/lib/import-model.ts`: selection, caches, dependency pruning, group size.
-- `src/lib/backup.ts`, `browser-storage.ts`, `dataset-session.ts`: validation/storage.
-- `src/lib/components/ImportPanel.svelte`, `ImportMonitor.svelte`: import UI.
-- `src/routes/+page.svelte`: application integration and browser lifecycle.
-- `collector/steam_collect.py` and identical `src/assets/collector.py`: standalone
-  collector. Still serial, no retries, 1,000-call default; no resumable checkpoint.
-
-## Verification and next work
-
-Commands: `npm test`, `npm run check`, `npm run test:browser`, `npm run build`,
-`python3 -m unittest discover -s collector -p 'test_*.py'`.
-Browser flows include a controlled delayed import, in-flight Pause, reload,
-explicit Resume, desktop/mobile layouts, no-achievements, access failures,
-backup/restore and storage failures. These mock Steam; no live throughput or
-real rate-limit benchmark has been established. Do not assume three workers is a
-Valve-promised safe rate. Avoid full-library live diagnostic runs unnecessarily.
-
-Continue inspecting actual interaction: long imports, many no-achievement games,
-large libraries, interrupted saves, mobile controls, and outcome language. Do not
-reinstate old pacing or expand complexity merely because older plan sections say
-so. Public imports must remain disabled until deployment protection and monitored
-pilot are verified: per-invocation concurrency and client accounting cannot
-protect an API key globally across Vercel instances or hostile callers.
-
-Latest validation after cooldown/no-achievement fixes: 98 application tests pass,
-Svelte check0errors/0warnings, and the targeted no-achievement browser regression
-passes. No live Steam calls were used. The previous production build passed before
-these small follow-ups; it was not rerun for this handoff.
+Use CONTRIBUTING.md for the code map and commands. One dev server per checkout; stop it
+before build. Do not carry stale process IDs, test totals or deployment assumptions forward
+without checking. Update this handoff in place when the work or evidence changes.

@@ -32,6 +32,13 @@ preferences, and verification dates. Restore shows a replacement preview. Browse
 storage is not a permanent backup: retain downloaded copies. Existing IndexedDB and
 localStorage data migrate on the same origin. Demo changes are session-only.
 
+## Working on this repository
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), [repository rules](AGENTS.md), and
+[the current handoff](docs/plans/agent-handoff.md). The [documentation map](docs/README.md)
+distinguishes active references from historical migration plans. Keep work in a task
+branch and PR. Application CI runs independently of Vercel preview checks.
+
 ## Verification
 
 ```bash
@@ -53,8 +60,8 @@ npm run test:browser
 `UI_BASE_URL` can override the local test URL. Tests use isolated browser contexts.
 The optional `tests/manual-live-smoke.mjs` is deliberately excluded from automated
 suites; it makes three real Steam requests and requires a live-enabled local server
-and the private local collector export. See [migration verification](docs/plans/migration-verification.md)
-for coverage, results, and user-testing suggestions. The development-only `/ui`
+and the private local collector export. See [the contribution workflow](CONTRIBUTING.md)
+for acceptance checks and [the current handoff](docs/plans/agent-handoff.md) for evidence. The development-only `/ui`
 gallery displays shared primitives; production returns 404.
 
 ## Features
@@ -70,9 +77,9 @@ gallery displays shared primitives; production returns 404.
 
 ## Vercel deployment
 
-The migration is implemented and tested locally; **it has not been deployed**.
-`vercel.json` selects SvelteKit and the adapter creates Vercel output. Verify the
-existing project's framework setting and preserve its production origin before rollout.
+Vercel automatically deploys PR previews. Production rollout has not been verified
+in this audit. `vercel.json` selects SvelteKit and the adapter creates Vercel output.
+Verify the existing project's settings and preserve its production origin before rollout.
 
 Configure server-only variables from [.env.example](.env.example). Live imports are
 disabled unless `STEAM_IMPORT_ENABLED=true`. Before enabling a public deployment,
@@ -99,12 +106,14 @@ for resumable imports.
 Key resolution: `--key` > `STEAM_WEB_API_KEY` > `collector/key.env`.
 `src/assets/collector.py` must match `collector/steam_collect.py`.
 
-## Design and implementation records
+## Historical design and implementation records
 
 - [Backend and storage plan](docs/plans/sveltekit-and-steam-import.md)
 - [Frontend screen plan](docs/plans/frontend-plan.md) and [illustrative drafts](docs/plans/frontend-preview.html)
 - [Shared style guide](docs/plans/ui-style-guide.md) and [shadcn adoption audit](docs/plans/shadcn-svelte-audit.md)
-- [Migration verification and testing handoff](docs/plans/migration-verification.md)
+- [Historical migration verification](docs/plans/migration-verification.md)
+
+These records preserve earlier decisions and results; use the current handoff for status.
 
 Source lives in `src/routes`, `src/lib`, and `src/lib/components`; shared primitives
 are in `src/lib/components/ui`. Earlier durable-backend proposals are archived and

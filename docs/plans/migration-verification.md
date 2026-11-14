@@ -1,5 +1,8 @@
 # Migration implementation and testing handoff
 
+> Historical migration record. Status, test totals and proposed behavior below may be
+> superseded. See [current handoff](agent-handoff.md) and [workflow](../../CONTRIBUTING.md).
+
 2026-11-14. Implemented locally; not committed or deployed. This supersedes the
 implementation-status paragraphs in earlier planning and audit records.
 

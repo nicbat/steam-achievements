@@ -114,7 +114,7 @@ sample/file/import recovery tasks. Run Svelte checks and relevant tests; run the
 browser suite before calling the UI repair complete. Use controlled imports for repeatability.
 
 This audit does not prove accessibility conformance, public import safety, smooth live-network
-performance or usability with actual users. The backend deployment gates in the handoff remain.
+performance or usability with actual users. The deployment requirements linked from the current handoff remain.
 The four implementation slices above are now implemented and browser-checked. Keep the PR
 draft for review of the inherited migration and the repaired interface; actual-user and
 live-network validation remain separate from these controlled checks.
@@ -171,7 +171,7 @@ Final verification: 98 application tests pass; the complete browser suite passes
 both new regressions. The final keyboard/long-title/plan-deduplication refinements passed
 another targeted continuity run. Final Svelte check reports 0 errors / 0 warnings, and
 `npm run build` succeeds with Vercel adapter output. Local development was stopped for the
-build and restarted afterward. No deployment or real Steam calls were made.
+build and restarted afterward. No manual production deployment or real Steam calls were made; pushing the PR creates Vercel previews.
 
 Review artifacts (local, not committed):
 - `/tmp/atlas-ui-repaired/`: desktop, 390px and 320px snapshots of seven screens.
@@ -220,3 +220,8 @@ as applicable, rather than assuming one successful route covers them all.
 Remaining scope: this targeted audit is not a proof that every control is correct. Optimizer
 threshold interactions, all export/import variants and actual-user comprehension still deserve
 focused acceptance sessions. Do not claim that passing totals establish feature completeness.
+
+
+## Workflow follow-up
+
+Application CI passed for commit `8fc5a6b` in [run 43647145302](https://github.com/nicbat/steam-achievements/actions/runs/43647145302), including the production build. Current process and status now live in the root CONTRIBUTING.md and current handoff; older migration records are explicitly historical. The repository rules and PR template require observable action outcomes and scoped evidence, not blanket completion claims.

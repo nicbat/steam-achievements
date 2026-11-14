@@ -1,5 +1,8 @@
 # Frontend design review and verification
 
+> Historical migration record. Status, test totals and proposed behavior below may be
+> superseded. See [current handoff](agent-handoff.md) and [workflow](../../CONTRIBUTING.md).
+
 2026-11-14. Companion to the [frontend plan](frontend-plan.md) and
 [screen prototype](frontend-preview.html). All prototype data and operations are simulated.
 

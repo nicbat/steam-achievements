@@ -1,0 +1,9 @@
+---
+description: Repository workflow and verification expectations
+alwaysApply: true
+---
+
+Read and follow the root `AGENTS.md` and `CONTRIBUTING.md`.
+Use `docs/plans/agent-handoff.md` for current status and `docs/README.md` to distinguish
+active references from historical plans. Keep policy in those canonical files rather
+than duplicating it here.

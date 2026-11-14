@@ -1,5 +1,8 @@
 # shadcn-svelte adoption audit
 
+> Historical migration record. Status, test totals and proposed behavior below may be
+> superseded. See [current handoff](agent-handoff.md) and [workflow](../../CONTRIBUTING.md).
+
 **Implementation update (2026-11-14):** the migration is now implemented locally.
 See [current verification and rollout gates](migration-verification.md). The original
 planning/audit evidence below is retained as historical context, not current completion status.
