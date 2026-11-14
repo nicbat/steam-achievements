@@ -4,19 +4,21 @@ Collect a Steam user's data into structured JSON for downstream analysis.
 
 Per game it gathers playtime, per-achievement unlock status, each achievement's
 global unlock rate (rarity), and its icon URLs (unlocked + grayscale) from the
-game schema. Games are fetched concurrently with a thread pool.
+game schema. API calls are serialized, spaced, and limited to 1,000 by default.
+Failures stop collection without replacing the output; retries are manual.
 
 Output: steam_data.json (see the shape near the bottom of main()).
 
 Standard library only — no `pip install` required. Runs on any Python 3.
 
 Usage:
-    python3 steam_collect.py [vanity_or_steamid] --key YOUR_API_KEY [--workers N]
+    python3 steam_collect.py PROFILE --key YOUR_API_KEY [--workers N] [--max-calls N] [--output FILE]
 
 The key can also come from the STEAM_WEB_API_KEY env var or a key.env file
 (STEAM_WEB_API_KEY=... on one line); the --key flag wins if given.
 """
 
+import argparse
 import concurrent.futures
 import json
 import os
@@ -33,8 +35,27 @@ import urllib.request
 API = "https://api.steampowered.com"
 HERE = os.path.dirname(os.path.abspath(__file__))
 KEY_FILE = os.path.join(HERE, "key.env")
-DEFAULT_ID = "76561198197939591"
-DEFAULT_WORKERS = 8
+DEFAULT_WORKERS = 1
+MAX_CALLS = 1000
+_calls = 0
+_last_start = None
+_stop_reason = None
+_request_lock = threading.Lock()
+
+
+class CollectionStopped(RuntimeError):
+    """A shared failure stops all workers without publishing partial output."""
+
+
+def reset_requests(max_calls=1000):
+    global MAX_CALLS, _calls, _last_start, _stop_reason
+    MAX_CALLS, _calls, _last_start, _stop_reason = max_calls, 0, None, None
+
+
+def stop_requests(reason):
+    global _stop_reason
+    _stop_reason = reason
+    raise CollectionStopped(reason)
 
 _print_lock = threading.Lock()
 
@@ -61,32 +82,78 @@ def load_key(cli_key=None):
 
 
 def get(path, **params):
-    """GET {API}/{path}?params using only the standard library (urllib).
-
-    urllib.request.urlopen is thread-safe for independent calls, so no per-thread
-    session is needed — the thread pool can share this function directly.
-    """
-    params["key"] = KEY
-    url = f"{API}/{path}?" + urllib.parse.urlencode(params)
-    for attempt in range(4):
+    """Serialize and budget upstream calls across every worker; never auto-retry."""
+    global _calls, _last_start
+    # Hold the lock through the response so a denial stops queued workers before
+    # another call starts. Extra workers only overlap local processing.
+    with _request_lock:
+        if _stop_reason:
+            raise CollectionStopped(_stop_reason)
+        if _calls >= MAX_CALLS:
+            stop_requests("API call allowance reached. No output was replaced. Increase --max-calls explicitly if needed.")
+        if _last_start is not None:
+            time.sleep(max(0, 0.5 - (time.monotonic() - _last_start)))
+        params["key"] = KEY
+        url = f"{API}/{path}?" + urllib.parse.urlencode(params)
+        _last_start = time.monotonic()
+        _calls += 1
         try:
-            with urllib.request.urlopen(url, timeout=30) as r:
-                return json.loads(r.read().decode("utf-8"))
+            with urllib.request.urlopen(url, timeout=15) as r:
+                payload = r.read(2097153)
+                if len(payload) > 2097152:
+                    stop_requests("Steam response exceeded the safe size limit. No output was replaced.")
+                result = json.loads(payload.decode("utf-8"))
+                if not isinstance(result, dict):
+                    stop_requests("Steam returned malformed data. No output was replaced.")
+                return result
         except urllib.error.HTTPError as e:
-            if e.code == 429:  # rate limited — back off
-                time.sleep(5 * (attempt + 1))
-                continue
-            return None
-        except (urllib.error.URLError, TimeoutError, ValueError) as e:
-            time.sleep(2 * (attempt + 1))
-            if attempt == 3:
-                with _print_lock:
-                    print(f"  ! request error {e}", file=sys.stderr)
-            continue
-    return None
+            try:
+                if path == "ISteamUserStats/GetPlayerAchievements/v1" and e.code in (400, 403):
+                    try:
+                        stats = json.loads(e.read(2097152)).get("playerstats", {})
+                        error = stats.get("error", "").strip().lower().rstrip(".")
+                        if stats.get("success") is False and error in (
+                            "requested app has no stats", "requested app has no stats for this user",
+                            "profile is not public", "profile is private", "private profile",
+                        ):
+                            return None
+                    except (ValueError, AttributeError, TypeError):
+                        pass
+                if e.code in (400, 404) and path.startswith("ISteamUserStats/"):
+                    return None
+                stop_requests(f"Steam returned HTTP {e.code}. Collection stopped; no output was replaced. Retry manually later.")
+            finally:
+                e.close()
+        except (urllib.error.URLError, TimeoutError, OSError, ValueError, UnicodeError):
+            # Never include exception text: urllib errors may contain the key URL.
+            stop_requests("Steam request failed or returned malformed data. Collection stopped; no output was replaced.")
+
+
+def normalize_ident(ident):
+    """Accept a SteamID64, vanity name, or a copied Steam Community profile URL."""
+    ident = ident.strip()
+    if ident.startswith(("steamcommunity.com/", "www.steamcommunity.com/")):
+        ident = "https://" + ident
+    if "://" in ident:
+        url = urllib.parse.urlsplit(ident)
+        parts = url.path.strip("/").split("/")
+        if (url.scheme not in ("http", "https")
+                or url.hostname not in ("steamcommunity.com", "www.steamcommunity.com")
+                or len(parts) != 2 or parts[0] not in ("id", "profiles")):
+            raise ValueError("Use a Steam Community /id/name or /profiles/SteamID64 profile URL.")
+        ident = parts[1]
+        if parts[0] == "profiles" and not (ident.isdigit() and len(ident) == 17):
+            raise ValueError("A /profiles/ URL must contain a 17-digit SteamID64.")
+    if not ident or any(c in ident for c in "/?#") or any(c.isspace() for c in ident):
+        raise ValueError("Enter a SteamID64, vanity name, or Steam Community profile URL.")
+    return ident
 
 
 def resolve_steamid(ident):
+    try:
+        ident = normalize_ident(ident)
+    except ValueError as e:
+        raise SystemExit(str(e)) from None
     if ident.isdigit() and len(ident) == 17:
         return ident
     data = get("ISteamUser/ResolveVanityURL/v1", vanityurl=ident)
@@ -137,7 +204,19 @@ def collect_player(sid):
 def schema_icons(appid):
     """api_name -> {'icon', 'icon_gray'} from the game's achievement schema."""
     data = get("ISteamUserStats/GetSchemaForGame/v2", appid=appid)
-    achs = (data or {}).get("game", {}).get("availableGameStats", {}).get("achievements", [])
+    if data is None:
+        return {}
+    game = data.get("game")
+    if not isinstance(game, dict):
+        stop_requests("Steam returned malformed achievement details. No output was replaced.")
+    stats = game.get("availableGameStats")
+    if stats is None:
+        return {}
+    if not isinstance(stats, dict):
+        stop_requests("Steam returned malformed achievement details. No output was replaced.")
+    achs = stats.get("achievements", [])
+    if not isinstance(achs, list) or any(not isinstance(a, dict) or not isinstance(a.get("name"), str) or not a["name"] for a in achs):
+        stop_requests("Steam returned malformed achievement details. No output was replaced.")
     out = {}
     for a in achs:
         out[a.get("name", "")] = {"icon": a.get("icon"), "icon_gray": a.get("icongray")}
@@ -166,12 +245,18 @@ def process_game(g):
         "achievements": [],
     }
 
+    icons = schema_icons(appid)
+    if not icons:
+        return rec
+
     player = get("ISteamUserStats/GetPlayerAchievements/v1", steamid=STEAMID, appid=appid, l="english")
     pstats = (player or {}).get("playerstats", {})
     if not (pstats.get("success") and "achievements" in pstats):
         return rec
 
     player_ach = pstats["achievements"]
+    if not player_ach:
+        return rec
 
     gdata = get("ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2", gameid=appid)
     global_pct = {}
@@ -180,8 +265,6 @@ def process_game(g):
             global_pct[a["name"]] = float(a["percent"])
         except (TypeError, ValueError):
             pass
-
-    icons = schema_icons(appid)
 
     for a in player_ach:
         api_name = a.get("apiname", "")
@@ -209,23 +292,37 @@ def process_game(g):
     return rec
 
 
-def main():
-    ident = DEFAULT_ID
-    workers = DEFAULT_WORKERS
-    cli_key = None
-    args = sys.argv[1:]
-    i = 0
-    while i < len(args):
-        if args[i] == "--workers":
-            workers = int(args[i + 1])
-            i += 2
-        elif args[i] in ("--key", "-k"):
-            cli_key = args[i + 1]
-            i += 2
-        else:
-            ident = args[i]
-            i += 1
+def positive_workers(value):
+    try:
+        workers = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("workers must be a positive integer") from None
+    if not 1 <= workers <= 4:
+        raise argparse.ArgumentTypeError("workers must be between 1 and 4")
+    return workers
 
+
+def positive_calls(value):
+    try:
+        calls = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("max-calls must be a positive integer") from None
+    if calls < 1:
+        raise argparse.ArgumentTypeError("max-calls must be a positive integer")
+    return calls
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("profile", help="SteamID64, vanity name, or Steam Community profile URL")
+    parser.add_argument("--key", "-k", help="Steam API key (also read from STEAM_WEB_API_KEY or key.env)")
+    parser.add_argument("--workers", type=positive_workers, default=DEFAULT_WORKERS)
+    parser.add_argument("--max-calls", type=positive_calls, default=1000, help="Total API attempt allowance (default 1000); explicit increase permits more calls")
+    parser.add_argument("--output", "-o", default=os.path.join(HERE, "steam_data.json"), help="Output JSON path")
+    args = parser.parse_args()
+    ident, workers, cli_key = args.profile, args.workers, args.key
+
+    reset_requests(args.max_calls)
     global KEY, STEAMID
     KEY = load_key(cli_key)
     STEAMID = resolve_steamid(ident)
@@ -235,7 +332,9 @@ def main():
     print(f"Player: {player.get('persona_name')} (level {player.get('steam_level')})")
 
     owned = get("IPlayerService/GetOwnedGames/v1", steamid=STEAMID, include_appinfo=1, include_played_free_games=1)
-    owned_games = (owned or {}).get("response", {}).get("games", [])
+    if owned is None:
+        raise SystemExit("Steam could not return the game library. Check your API key and connection, then retry.")
+    owned_games = owned.get("response", {}).get("games", [])
     if not owned_games:
         raise SystemExit("No owned games (game details likely private).")
     owned_games.sort(key=lambda g: g.get("name", "").lower())
@@ -278,7 +377,7 @@ def main():
         "games": games,
     }
 
-    out = os.path.join(HERE, "steam_data.json")
+    out = os.path.abspath(os.path.expanduser(args.output))
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
@@ -292,4 +391,7 @@ def main():
 if __name__ == "__main__":
     KEY = ""
     STEAMID = ""
-    main()
+    try:
+        main()
+    except CollectionStopped as error:
+        raise SystemExit(str(error)) from None

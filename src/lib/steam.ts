@@ -39,16 +39,49 @@ export function averageCompletion(games: Game[]): AverageResult {
 
 /** Runtime shape check so a wrong file gives a clear error instead of a blank screen. */
 export function isSteamData(x: unknown): x is SteamData {
-  if (typeof x !== "object" || x === null) return false;
-  const d = x as Record<string, unknown>;
-  return (
-    Array.isArray(d.games) &&
-    typeof d.player === "object" &&
-    d.player !== null &&
-    typeof d.totals === "object" &&
-    d.totals !== null &&
-    typeof d.steamid64 === "string"
-  );
+  if (!isRecord(x) || typeof x.steamid64 !== "string" || !x.steamid64.trim()) return false;
+  if (typeof x.collected_at !== "string" || !Number.isFinite(Date.parse(x.collected_at))) return false;
+  if (!isRecord(x.player) || !isRecord(x.totals) || !Array.isArray(x.games)) return false;
+  const player = x.player;
+  // Older exports may omit metadata such as icons, profile details, or platform
+  // playtimes. Require the values the dashboard computes with, and type-check
+  // optional metadata when present without insisting on newer collector fields.
+  if (!["persona_name", "profile_url", "real_name", "country", "account_created", "last_logoff", "visibility", "avatar"]
+    .every((key) => optionalString(player[key]))) return false;
+  if (!["steam_level", "xp", "badge_count"].every((key) => optionalNumber(player[key]))) return false;
+  const totals = x.totals;
+  if (!["owned_games", "games_with_achievements", "total_playtime_hours", "total_achievements", "total_achievements_unlocked"]
+    .every((key) => nonnegativeNumber(totals[key]))) return false;
+  return x.games.every((game) => {
+    if (!isRecord(game) || !Number.isSafeInteger(game.appid) || (game.appid as number) <= 0) return false;
+    if (typeof game.name !== "string" || typeof game.has_achievements !== "boolean") return false;
+    if (!["playtime_forever_min", "achievements_total", "achievements_unlocked"]
+      .every((key) => nonnegativeNumber(game[key]))) return false;
+    if (!optionalString(game.last_played) || !Array.isArray(game.achievements)) return false;
+    return game.achievements.every((achievement) => {
+      if (!isRecord(achievement)) return false;
+      return typeof achievement.api_name === "string" && typeof achievement.name === "string" &&
+        typeof achievement.unlocked === "boolean" &&
+        ["description", "unlock_time", "icon", "icon_gray"].every((key) => optionalString(achievement[key])) &&
+        optionalNumber(achievement.global_completion_rate_pct);
+    });
+  });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function nonnegativeNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function optionalNumber(value: unknown): boolean {
+  return value == null || nonnegativeNumber(value);
+}
+
+function optionalString(value: unknown): boolean {
+  return value == null || typeof value === "string";
 }
 
 export function formatHours(hours: number): string {

@@ -12,9 +12,9 @@ export function saveData(data: SteamData): void {
 }
 
 export function loadData(): SteamData | null {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
   try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     return isSteamData(parsed) ? parsed : null;
   } catch {
@@ -23,5 +23,9 @@ export function loadData(): SteamData | null {
 }
 
 export function clearData(): void {
-  localStorage.removeItem(STORAGE_KEY);
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage can be unavailable; still allow resetting the current session.
+  }
 }

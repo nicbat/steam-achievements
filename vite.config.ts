@@ -1,7 +1,11 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-
-// Static, client-only app. No backend, deployable to any static host.
+import { sveltekit } from "@sveltejs/kit/vite";
+import adapter from "@sveltejs/adapter-vercel";
+import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
-  plugins: [react()],
+  optimizeDeps: { include: ["layerchart"] },
+  plugins: [
+    tailwindcss(),
+    sveltekit({ adapter: adapter({ runtime: "nodejs24.x" }), files: { assets: "public" } }),
+  ],
 });

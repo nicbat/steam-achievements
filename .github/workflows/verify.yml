@@ -1,0 +1,51 @@
+name: Verify application
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check
+      - run: npm test
+      - run: python3 -m unittest discover -s collector -p 'test_*.py'
+      - name: Browser action and recovery tests (mocked Steam)
+        env:
+          STEAM_IMPORT_ENABLED: 'false'
+        run: |
+          ./node_modules/.bin/vite --host 127.0.0.1 --port 5188 --strictPort > /tmp/atlas-ci-vite.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true' EXIT
+          ready=false
+          for attempt in $(seq 1 90); do
+            if curl --max-time 2 -fs -o /dev/null http://127.0.0.1:5188/; then ready=true; break; fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then cat /tmp/atlas-ci-vite.log; exit 1; fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then cat /tmp/atlas-ci-vite.log; exit 1; fi
+          npm run test:browser
+      - run: npm run build
+      - name: Failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: browser-diagnostics
+          retention-days: 7
+          path: |
+            /tmp/atlas-ci-vite.log
+            /tmp/atlas-browser-tests/
+            /tmp/atlas-browser-videos/
